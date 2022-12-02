@@ -1,0 +1,16 @@
+{
+  "name": "reactprac",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000R\u0000e\u0000a\u0000c\u0000t\u0000P\u0000r\u0000a\u0000c\u0000\r\u0000 \u0000",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "git+https://github.com/hb9397/ReactPrac.git",
+  "author": "hb9397@naver.com <hb9397@naver.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hb9397/ReactPrac/issues"
+  },
+  "homepage": "https://github.com/hb9397/ReactPrac#readme"
+}
