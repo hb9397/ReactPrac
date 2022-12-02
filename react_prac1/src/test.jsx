@@ -1,7 +1,9 @@
-import React from 'react'
+import React, {Component} from 'react';
 
-export const test = () => {
-  return (
-    <div>test</div>
-  )
+class test extends Component{
+  render(){
+    return (<div>나의 컴포넌트</div>)
+  }
 }
+
+export default test;
