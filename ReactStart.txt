@@ -486,5 +486,51 @@ REACT
 
             클라이언트의 데이터를 업데이트하고 나중에 클라이언트의 데이터를 기반으로 서버의 데이터를 업데이트 하는 것이 트래픽양을 줄이고 출력에 영향을 최소화 할 수 있다.
             ex> 캘린더 어플, 혼자하는 스마트폰 게임 등
+
+10. 함수형 컴포넌트 state useState
+    => 함수형 컴포넌트에서 state를 사용하기 위한 react Hook 중 하나다.
+    => useState를 호출하게 되면 배열이 반환되는데 첫번째 데이터는 state의 현재 상태이고 두번째 원소는 현재 상태를 변경해주는 setter 역할의 함수이다.
+    => useState 에는 상태의 초기값을 매개변수로 대입할 수 있다.
+
+    [/src/component/stateFuncType.jsx]
         
-            
+    import React, { useState } from 'react'
+
+    const stateFuncType = () => {
+        var [count, setCount] = useState(0);
+
+        const countPlus = (e) => {
+            setCount(count= count +1);
+        }
+
+        return (
+            <div>
+                <p>
+                    숫자 : {count}
+                </p>
+                <button onClick={countPlus}>
+                    증가
+                </button>
+            </div>
+        )
+    }
+
+    export default stateFuncType
+
+    => state를 수정할 때는 클래스형 컴포넌트에서는 setState 그리고 함수형 컴포넌트에서는 useState 함수를 이용해야 한다.
+
+    P.S. 객체나 배열을 수정할 때는 복사본을 만들고 수정하는 것이 바람직하다.
+        const object = {'name':'adam', 'age' : 29};
+        // name 수정 - object를 직접 수정하는 것.
+
+        // 기존 object의 내용을 복제해서 name을 수정
+        const copyObject = {...object, 'name':'군계}
+
+        let ar = [1,2,3]
+        ar.push[4]; // 배열에 직접 추가
+
+        let copyAr = ar.concat(4) // 배열에 복사해서 추가적으로
+
+        // 배열에서 데이터를 삭제하거나 변형을 가하고자 할 때는 filter나 map 함수 이용을 권장한다.
+        filter나 map은 작업을 수행한 후 새로운 배열을 수행한다.
+

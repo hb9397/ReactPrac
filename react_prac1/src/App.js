@@ -1,6 +1,7 @@
 import React from 'react'
 import TEST from './test'
-import STATE from './component/stateClassType'
+import STATE from './component/StateClassType'
+import USESTATE from './component/StateFuncType'
 
 
 const App = () => {
@@ -9,7 +10,8 @@ const App = () => {
     <>
     <div> 컴포넌트 {message}</div><br/>
     <TEST name = "Adam" year = {199}>태그 안의 내용 사용하기</TEST>
-    <STATE></STATE>
+    <STATE></STATE><br></br>
+    <USESTATE/>
     </>
   )
 }

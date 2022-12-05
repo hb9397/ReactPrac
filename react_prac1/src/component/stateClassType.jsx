@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-class stateClassType extends Component {
+class StateClassType extends Component {
     // 생성자에서 초기화 하기
     constructor(props) {
         // 상위 클래스의 생성자 호출
@@ -40,4 +40,4 @@ class stateClassType extends Component {
     }
 }
 
-export default stateClassType;
+export default StateClassType;
