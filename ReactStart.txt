@@ -599,3 +599,165 @@ REACT
             외부 인스턴스 안에서 내부 인스턴스가 생성되기 때문에 외부에서 내부를 사용하는 것은 쉽다.
             하지만 내부 인스턴스가 외부 인스턴스를 사용하는 것은 조금 까다롭다, 일반적으로 생성시 외부 인스턴스의 참조를 넘겨주어야 한다.
 
+    4) Bable 의 transform-class-properties 문법 사용
+        => 클래스 안에 일반 메서드를 생성하면 바벨은 이를 인스턴스의 메서드로 자동 변형한다.
+        => 클래스 안에 함수를 만든 경우 this에 다시 바인딩하지 않아도 된다.
+        => constructor(props) 생성자 외부에 메서드를 만든 경우 this.메서드.bind(this) 처럼 바인딩해야 인스턴스 안에 메서드가 포함되게 된다.
+        => 하지만 Babel의 문법에서는 그럴 필요가 없이 자동으로 변형된다.
+
+        [src/component/EventPrac.jsx]
+            import React, { Component } from 'react'
+
+            class EventPrac extends Component {
+                /* state = {
+                    name : '',
+                    btnAble : true
+                } */
+
+                render() {
+                    const changeInput = (e) => {
+                        this.setState({name: e.target.value})
+                        this.setState({btnAble: false})
+                    }
+
+                    const btnOnClick = (e) => {
+                        alert(this.state.name);
+                        this.setState({
+                            name: "",
+                            btnAble: true
+                        })
+                    }
+
+                    return (
+                        <div>
+                            <h1>이벤트 연습</h1>
+                            <input type='text' name='message' placeholder='이름을 입력하세요' value={this.state.name}
+                                onChange={this.changeInput}>
+                            </input>
+                            <button disabled = {this.state.able} onClick={this.btnOnClick}>확인</button><br/>
+                            <textarea value={this.state.name} cols="30" rows="10"></textarea>
+                        </div>
+                    )
+                }
+            }
+
+            export default EventPrac;
+
+    5) Event Routing
+        => 하나의 함수로 여러 DOM의 이벤트를 처리하는 것으로 e.target 속성을 이용한다.
+        => 이벤트 처리 함수의 매개변수로 Event 객체가 전달되는데 이벤트 처리 함수의 매개변수의 target 속성을 호출하면 이벤트가 발생한 객체의 참조를 반환한다.
+        => 이벤트가 발생한 객체의 참조를 가지고 분기문을 만들어서 이벤트 코드를 작성하면 하나의 함수를 가지고 여러 DOM의 이벤트 처리가 가능하다.
+        => name이나 id 속성 등을 적절히 이용한다.
+
+        [src/component/EventPrac.jsx]
+            import React, { Component } from 'react'
+
+            class EventPrac extends Component {
+                state = {
+                    name : '',
+                    message: '',
+                    btnAble : true
+                }
+
+                render() {
+                    const changeInput = (e) => {
+                        this.setState({
+                            // 이벤트가 발생한 객체는 e.target
+                            // e.target.name은 이벤트가 발생한 객체의 name
+                            [e.target.name]: e.target.value
+                        })
+                        this.setState({btnAble: false})
+                    }
+
+                    const btnOnClick = (e) => {
+                        alert(this.state.name + ":" + this.state.message);
+                        this.setState({
+                            name: "",
+                            message: '',
+                            btnAble: true
+                        })
+                    }
+
+                    return (
+                        <div>
+                            <h1>이벤트 연습</h1>
+                            <input type='text' name='name' placeholder='이름을 입력하세요' value={this.state.name}
+                                onChange={changeInput}>
+                            </input>
+                            <textarea value={this.state.name} cols="13" rows="1"></textarea>
+
+                            <h1>이벤트 연습</h1>
+                            <input type='text' name='message' placeholder='메시지를 입력하세요' value={this.state.message}
+                                onChange={changeInput}>
+                            </input>
+                            <textarea value={this.state.message} cols="13" rows="1"></textarea>
+
+                            <button disabled = {this.state.able} onClick={btnOnClick}>확인</button><br/>
+                            
+                        </div>
+                    )
+                }
+            }
+
+            export default EventPrac;
+
+    6) onKeyPress 이벤트
+        => react에서는 키보드 이벤트에서 이벤트 객체의 key 라는 속성에 누른 키값을 전달하는데 문자열 형태로 전달한다.
+        
+        => Enter를 치면 button을 Click 한것과 동일한 효과를 가지도록 [src/component/EventPrac.jsx] 수정
+        [src/component/EventPrac.jsx]
+            import React, { Component } from 'react'
+
+            class EventPrac extends Component {
+                state = {
+                    name : '',
+                    message: '',
+                    btnAble : true
+                }
+
+                render() {
+                    const changeInput = (e) => {
+                        this.setState({
+                            // 이벤트가 발생한 객체는 e.target
+                            // e.target.name은 이벤트가 발생한 객체의 name
+                            [e.target.name]: e.target.value
+                        })
+                        this.setState({btnAble: false})
+                    }
+
+                    const btnOnClick = (e) => {
+                        alert(this.state.name + ":" + this.state.message);
+                        this.setState({
+                            name: "",
+                            message: ''
+                        })
+                        this.setState({btnAble: true})
+                    }
+
+                    const inputKeyPress = (e) =>{
+                        if(e.key === 'Enter'){
+                            btnOnClick();
+                        }
+                    }
+
+                    return (
+                        <div>
+                            <h1>이벤트 연습</h1>
+                            <input type='text' name='name' placeholder='이름을 입력하세요' value={this.state.name}
+                                onChange={changeInput} onKeyPress={inputKeyPress}>
+                            </input>
+                            <textarea value={this.state.name} cols="13" rows="1"></textarea><br/>
+
+                            <input type='text' name='message' placeholder='메시지를 입력하세요' value={this.state.message}
+                                onChange={changeInput} onKeyPress={inputKeyPress}>
+                            </input>
+                            <textarea value={this.state.message} cols="13" rows="1"></textarea><br/>
+
+                            <button disabled = {this.state.btnAble} onClick={btnOnClick}>확인</button><br/>
+                            
+                        </div>
+                    )
+                }
+            }
+
+            export default EventPrac;
