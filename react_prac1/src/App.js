@@ -21,7 +21,7 @@ class App extends Component {
         <EventPracFunc /><br />
         <ValidationSample /><br />
         <ScrollBox ref={ref => { this.box = ref }} />
-        <button onClick={this.box.scrollToBottom}>맨 아래로</button>
+        <button onClick={(e)=>{this.box.scrollToBottom()}}>맨 아래로</button>
       </>
     )
   }
