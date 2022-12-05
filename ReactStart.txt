@@ -202,7 +202,7 @@ REACT
                 -> (a, b) => {a + b}
 
             => 위의 두 규칙은 Java에서도 동일한 개념(람다식_어나니머스 function)으로 적용된다.
-            => React 자동완성 : jsx 파일에서 rafc ,rafce(exports.moduel 적용시)
+            => React 자동완성(extension 설치) : jsx 파일에서 rafc ,rafce(exports.moduel 적용시)
 
 8. props
     1) 하위 컴포넌트에게 넘겨 줄 때.
@@ -215,4 +215,150 @@ REACT
         => 함수 형 컴포넌트는 모든 props를 하나로 묶어서 함수의 매개변수로 받음
         => 함수의 매개변수를 이용해서 사용
 
-    3) props 
+    3) props 사용
+
+        [App.js]
+
+            import React from 'react'
+            import TEST from './test'
+
+            const App = () => {
+            const message = " - 클래스형 컴포넌트는 과거에 많이 사용함, 현재는 함수형 컴포넌트를 많이 사용";
+            return (
+                <>
+                <div>함수형 컴포넌트 {message}</div>
+                <TEST name = "Adam"/>
+                </>
+            )
+            }
+
+            export default App
+
+        [test.jsx]
+
+            import React from 'react'
+
+            const test = (props) => {
+            return (
+                <>
+                <div>나의 컴포넌트 이름음 {props.name} 입니다.</div>
+                </>
+            )
+            }
+            export default test
+
+        => 이 때 App.js 에서 다시 name 이라는 props를 test.jsx 컴포넌트에 전달하지 않으면 아무것도 출력되지 않는다.
+
+        => 함수형 컴포넌트 안에서 컴포넌트이름.defaultProps = {props.이름 = 값..}을 이용해서 기본값을 설정할 수 있다, 데이터가 넘어오지 않을 때 설정되는 값.
+        
+        [test.jsx]
+            import React from 'react'
+
+            const test = (props) => {
+
+            return (
+                <>
+                <div>나의 컴포넌트 이름음 {props.name} 입니다.</div>
+                </>
+            )
+            };
+
+            test.defaultProps = {name : '기본값'}
+
+            export default test
+
+    4) 상위 컴포넌트에서 하위 컴포넌트 태그 안의 내용을 하위 컴포넌트에서 사용
+        => props.children 을 이용해서 상위 컴포넌트에서 태그안에 삽입한 데이터를 읽을 수 있다.
+
+        [App.js]
+            import React from 'react'
+            import TEST from './test'
+
+            const App = () => {
+            const message = " - 클래스형 컴포넌트는 과거에 많이 사용함, 현재는 함수형 컴포넌트를 많이 사용";
+            return (
+                <>
+                <div>함수형 컴포넌트 {message}</div><br/>
+                <TEST name = "Adam">태그 안의 내용 사용하기</TEST>
+                </>
+            )   
+            }
+
+            export default App
+
+        [test.jsx]
+            import React from 'react'
+
+            const test = (props) => {
+
+            return (
+                <>
+                <div>나의 컴포넌트 이름음 {props.name} 입니다.</div><br/>
+                <div>{props.childrun}</div>
+                </>
+            )
+            };
+
+            test.defaultProps = {name : '기본값'}
+
+            export default test
+
+    5) 비구조화 할당
+        => JS는 객체를 분해해서 할당하는 것이 가능하다.
+            -> 분해해서 할당할 때는 인덱스가 아니라 이름을 가지고 데이터를 할당한다.
+
+        => test.jsx 파일의 props를 분해해서 할당
+        => 매개변수를 props로 한 번에 받아오는 것이 아니라 사용할 prop을 {prop1, prop2, ..} 와 같이 가져와 props.을 생략하고 사용하는 것이 가능하다.
+
+        [tes.jsx]
+            import React from 'react'
+
+            const test = ({name, children}) => { // 구조 분해 할당으로 매개 변수 가져오는 순서는 상관이 없음
+
+            return (
+                <>
+                <div>나의 컴포넌트 이름음 {name} 입니다.</div><br/>
+                <div>{children}</div>
+                </>
+            )
+            };
+
+            test.defaultProps = {name : '기본값'}
+
+            export default test
+
+    6) props 의 유효성 검사기능
+        => 필수나 자료형을 설정해서 검사하는 것이 가능하다.
+        => 그러나 실제 화면 출력에는 영향이 없고 스크립트 오류를 발생시켜 검사창에서만 오류가 발생한다.
+        
+        => props 값을 전달할 때 문자열이 아니라면 항상 {}로 감싸고 있어야한다.
+            -> 기본적으로 XML에서는 태그 안의 속성은 문자열만 가능하기 때문이다.
+            -> Ex> <TEST name = 3> </TEST> -> 오류 발생, <TEST name = {3}> </TEST>과 같이 작성
+
+        => props 유효성 검사
+        [test.jsx]
+            import React from 'react'
+            import PropTypes from 'prop-types'
+
+            // 구조 분해 할당으로 매개 변수 가져오는 순서는 상관이 없음
+            const test = ({name, children, year}) => {
+
+            return (
+                <>
+                <div>나의 컴포넌트 이름음 {name} 이고 {year}년에 태어났습니다.</div><br/>
+                <div>{children}</div>
+                </>
+            )
+            };
+
+            test.propTypes = {
+            name: PropTypes.string,
+            year: PropTypes.number.isRequired
+            }
+
+            test.defaultProps = {name : '기본값'}
+
+            export default test
+        => 만약 name과 year에 각각에 자료형에 맞는 데이터가 들어가 있지 않다면 화면상에는 아무런 문제가 없지만 개발자도구 콘솔을 확인 하면 오류를 확인할 수 있다.
+
+        
