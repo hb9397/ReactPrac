@@ -38,7 +38,9 @@ const EventPracFunc = () => {
 
     // Enter KeyPress 이벤트
     const onKeyPressEnter = (e) => {
-        onClickBtn();
+        if(e.key === 'Enter'){
+            onClickBtn();
+        }
     }
 
   return (
@@ -48,7 +50,7 @@ const EventPracFunc = () => {
 
         <input type = 'text' name = 'message' placeholder='메시지를 입력하세요' value={form.message} onChange={onChangeInput} onKeyPress={onKeyPressEnter}/>
         <textarea value={form.message}></textarea><br/><br/>
-        <button disabled={btnAble} onClick={onClickBtn}>확인</button>
+        <button disabled={btnAble} onClick={onClickBtn}>확인</button><br/>
     </>
   );
 }

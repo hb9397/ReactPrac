@@ -4,6 +4,7 @@ import STATE from './component/StateClassType'
 import USESTATE from './component/StateFuncType'
 //import EventPracClass from './component/EventPracClass'
 import EventPracFunc from './component/EventPracFunc'
+import ValidationSample from './component/ValidationSample'
 
 
 const App = () => {
@@ -16,7 +17,8 @@ const App = () => {
       <USESTATE /><br/>
       {/* 클래스형 컴포넌트 이벤트 처리 */}
       {/* <EventPracClass/> */}
-      <EventPracFunc/>
+      <EventPracFunc/><br/>
+      <ValidationSample/>
 
     </>
   )

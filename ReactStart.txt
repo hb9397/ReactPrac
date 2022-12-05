@@ -761,3 +761,86 @@ REACT
             }
 
             export default EventPrac;
+
+12. ref
+    => HTML 에서는 DOM 요소에 어떤 작업을 수행하고자 하는 경우 DOM 객체에 id를 부여한 후 document.getElementById 라는 함수로 DOM 객체를 찾은 후 작업을 진행
+    
+    => React 에서는 직접 DOM을 찾아와서 사용하는 작업을 거의 하지 않는데 id 대신 ref라는 개념을 가지고 DOM을 찾아서 핸들리한다.
+
+    1) ref를 설정하는 방법
+        => 콜백함수와 createRef라는 함수를 이용하는 방식 두가지가 있다.
+
+        => 콜백 함수를 이용하는 방법
+            <태그 ref={(ref) => {this.?=ref}}/>
+
+        => createRef() 함수 이용하는 방법
+            이름 = React.createRef();
+            <태그 ref = {this.이름}/>
+
+    2) css를 설정하는 컴포넌트 생성 [/src/css/ValidationSample.css]
+
+        [/src/css/ValidationSample.css]
+        .success{
+            background-color: lightgreen;
+        }
+
+        .failure{
+            background-color: lightcoral;
+        }
+
+    3) 만들어진 css 파일을 적용할 클래스형 컴포넌트 생성 [/src/component/ValidationSample.jsx]
+
+    [/src/component/ValidationSample.jsx]
+
+        import React, {Component} from "react";
+        import '../css/ValidationSample.css'
+
+        class ValidationSample extends Component {
+            // Ref(다른 DOM 객체를 참조할 수 있는 속성) 생성
+            // ipnut = React.createRef();
+
+
+            // 클래스 안의 멤버 변수나 함수 안의 지역 변수와 유사하다.
+            // 차이점으로는 state는 바로 적용된다.
+            state = {
+                password: '',
+                clicked: false,
+                vaildated: false
+            };
+
+            // 버튼 눌렀을 때
+            onClickBtn  = (e) => {
+                this.setState({
+                    clicked: true,
+                    validated: this.state.password === '0000'
+                })
+
+                // input이 참조하는 객체에 focus를 설정
+                // createRef 함수로 만든 경우 focus()
+                // this.input.current.focus();
+
+                this.input.focus();
+            }
+
+            // input의 입력값을 변경했을 때 처리
+            // 자신의 name과 동일한 state를 입력한 값으로 변경한다.
+            onChangeInput = (e) => {
+                this.setState({
+                    [e.target.name]: e.target.value
+                })
+            }
+
+            render(){
+                return(
+                    <div>
+                        <input type = 'password' value={this.state.password} name = 'password'
+                        className = {this.state.clicked ? this.state.vaildated ? 'success' : 'failure' : ''}
+                        onChange={this.onChangeInput} 
+                        ref={ref => {this.input = ref}}/><br/>
+                        <button onClick={this.onClickBtn}>검증하기</button>
+                    </div>
+                )    
+            }
+        }
+
+        export default ValidationSample
