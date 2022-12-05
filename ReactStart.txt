@@ -494,28 +494,38 @@ REACT
 
     [/src/component/stateFuncType.jsx]
         
-    import React, { useState } from 'react'
+        import React, { useState } from 'react'
 
-    const stateFuncType = () => {
-        var [count, setCount] = useState(0);
+        const StateFuncType = () => {
+            var [count, setCount] = useState(0);
 
-        const countPlus = (e) => {
-            setCount(count= count +1);
+            var [color, setColor] = useState('white')
+
+            const countPlus = (e) => {
+                setCount(count = count +1);
+            }
+
+            const changeBtnColorRed = (e) => {
+                setColor('red');
+            }
+
+            return (
+                <div>
+                    <p>
+                        숫자 : {count}
+                    </p>
+                    <button onClick={countPlus}>
+                        증가
+                    </button>
+
+                    <button style={{backgroundColor : color}} onClick={changeBtnColorRed}>
+                        색 변경
+                    </button>
+                </div>
+            )
         }
 
-        return (
-            <div>
-                <p>
-                    숫자 : {count}
-                </p>
-                <button onClick={countPlus}>
-                    증가
-                </button>
-            </div>
-        )
-    }
-
-    export default stateFuncType
+        export default StateFuncType
 
     => state를 수정할 때는 클래스형 컴포넌트에서는 setState 그리고 함수형 컴포넌트에서는 useState 함수를 이용해야 한다.
 

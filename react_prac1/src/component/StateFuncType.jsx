@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 const StateFuncType = () => {
     var [count, setCount] = useState(0);
 
-    var [color, setColor] = useState('black')
+    var [color, setColor] = useState('white')
 
     const countPlus = (e) => {
         setCount(count = count +1);
@@ -23,7 +23,7 @@ const StateFuncType = () => {
                 증가
             </button>
 
-            <button color={color} onClick={changeBtnColorRed}>
+            <button style={{backgroundColor : color}} onClick={changeBtnColorRed}>
                 색 변경
             </button>
         </div>
