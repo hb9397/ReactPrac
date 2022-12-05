@@ -2,7 +2,8 @@ import React from 'react'
 import TEST from './test'
 import STATE from './component/StateClassType'
 import USESTATE from './component/StateFuncType'
-import EventPrac from './component/EventPrac'
+//import EventPracClass from './component/EventPracClass'
+import EventPracFunc from './component/EventPracFunc'
 
 
 const App = () => {
@@ -13,7 +14,10 @@ const App = () => {
       <TEST name="Adam" year={199}>태그 안의 내용 사용하기</TEST>
       <STATE/><br/>
       <USESTATE /><br/>
-      <EventPrac/>
+      {/* 클래스형 컴포넌트 이벤트 처리 */}
+      {/* <EventPracClass/> */}
+      <EventPracFunc/>
+
     </>
   )
 }
