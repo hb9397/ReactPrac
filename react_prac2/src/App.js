@@ -139,10 +139,16 @@ const App = () => {
     nextId.current += 1;
   }
 
+  // 데이터를 삭제하는 함수
+  const onRemoveBtn = (id) =>{
+    // users state 에서 id가 id인 데이터를 삭제
+    // id가 일치하지 않는 데이터를 가지고 배열을 만들어서 수정하는 것.(실제로 삭제하는 것이 아니다.)
+    setUsers(users.filter(user => user.id !== id));
+  }
   
   return (
     <div>
-      <UserList users={users}/>
+      <UserList users={users} onRemoveBtn={onRemoveBtn}/>
       <CreateUser username={username} email={email} onChangeInput={onChangeInput} onCreateBtn={onCreateBtn}/>
 
       {/* <ErrorBoundary>
