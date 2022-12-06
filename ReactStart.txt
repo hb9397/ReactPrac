@@ -850,4 +850,72 @@ REACT
         => 다른 컴포넌트에서 Ref 속성을 이용해서 조작이 가능하다.
         => 컴포넌트를 다른 곳에서 조작하고자 할 때 Ref를 적절히 사용하면 된다.
 
-        => Scroll 이 가능한 컴포넌트 생성 [/src/component/ScrollBox]
+        => Scroll 이 가능한 컴포넌트 생성 [/src/component/ScrollBox.jsx]
+        
+        [/src/component/ScrollBox.jsx]
+            import React, { Component } from 'react'
+
+            class ScrollBox extends Component {
+                render() {
+                    const style = {
+                        border: ' 1px solid black',
+                        height: '300px',
+                        width: '300px',
+                        overflow: 'auto',
+                        postion: 'relative'
+                    };
+                    const innerStyle = {
+                        width: '100%',
+                        height: '650px',
+                        background: 'linear-gradient(white, black)'
+                    };
+
+                    return (
+                        <div style={style}
+                            ref={ref => { this.box = ref; }}>
+                            <div style={innerStyle} />
+                        </div>
+                    )
+                }
+
+                scrollToBottom = () => {
+                    const {scrollHeight, clientHeight} = this.box;
+                    this.box.scrollTop = scrollHeight - clientHeight;
+                }
+            }
+
+            export default ScrollBox
+
+    5) useRef를 사용한 것이 아니고 그냥 Ref를 사용했기 때문에 App.js를 Class 형 컴포넌트로 바꾼다.
+        
+        App.js
+        import React, { Component } from 'react'
+        import TEST from './test'
+        import STATE from './component/StateClassType'
+        import USESTATE from './component/StateFuncType'
+        //import EventPracClass from './component/EventPracClass'
+        import EventPracFunc from './component/EventPracFunc'
+        import ValidationSample from './component/ValidationSample'
+        import ScrollBox from './component/ScrollBox'
+
+        const message = " - 클래스형 컴포넌트는 과거에 많이 사용함, 현재는 함수형 컴포넌트를 많이 사용";
+        class App extends Component {
+        render() {
+            return (
+            <>
+                <div> 컴포넌트 {message}</div><br />
+                <TEST name="Adam" year={199}>태그 안의 내용 사용하기</TEST>
+                <STATE /><br />
+                <USESTATE /><br />
+                {/* 클래스형 컴포넌트 이벤트 처리 */}
+                {/* <EventPracClass/> */}
+                <EventPracFunc /><br />
+                <ValidationSample /><br />
+                <ScrollBox ref={ref => { this.box = ref }} />
+                <button onClick={(e)=>{this.box.scrollToBottom()}}>맨 아래로</button>
+            </>
+            )
+        }
+        }
+
+        export default App

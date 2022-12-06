@@ -21,6 +21,7 @@ class App extends Component {
         <EventPracFunc /><br />
         <ValidationSample /><br />
         <ScrollBox ref={ref => { this.box = ref }} />
+        {/* 클래스형 컴포넌트에서 함수를 호출할 때는 무조건 메서드이름()로 호출하고 함수형 컴포넌트에서는 메서드이름 으로 호출한다. */}
         <button onClick={(e)=>{this.box.scrollToBottom()}}>맨 아래로</button>
       </>
     )
