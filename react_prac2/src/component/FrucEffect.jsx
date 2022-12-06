@@ -7,7 +7,7 @@
         useEffect(() => {
             console.log("마운트와 업데이트가 끝나면 호출")
             document.title = `You clicked ${count} times`
-        })
+        });
 
     return (
         <div>
