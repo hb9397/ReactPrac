@@ -1,4 +1,4 @@
-import React, { Component, useState, useRef } from 'react';
+import React, { Component, useState, useRef, useMemo } from 'react';
 import UserList from './component/UserList';
 import CreateUser from './component/CreateUser';
 /* import ErrorBoundary from './component/ErrorBoundary'
@@ -87,6 +87,11 @@ const FucnState = () => {
 }
  */
 
+// active가 ture인 데이터의 개수
+const countActiveUser = (users) => {
+  console.log("사용자 수를 세기");
+  return users.filter(user => user.active).length;
+}
 
 const App = () => {
 
@@ -122,7 +127,8 @@ const App = () => {
     const user = {
       id: nextId.current,
       username,
-      email
+      email,
+      active: false
     }
 
     // 생성한 user 객체를 users state에 추가
@@ -150,12 +156,17 @@ const App = () => {
   const onToggle = (id) =>{
     // 클릭 이벤트에서 선택한 id값이 user state id와 같다면 해당 id
     setUsers(users.map(user => user.id === id ? {...user, active : !user.active} : user))
+
   }
-  
+
+  // useMemo를 통해 활성화된 user의 개수를 세는 함수 호출
+  const count = useMemo(() => countActiveUser(users), [users]);
+
   return (
     <div>
       <UserList users={users} onRemoveBtn={onRemoveBtn} onToggle={onToggle}/>
       <CreateUser username={username} email={email} onChangeInput={onChangeInput} onCreateBtn={onCreateBtn}/>
+      <div>활성화된 유저 수: {count}</div>
 
       {/* <ErrorBoundary>
         <Iteration />
