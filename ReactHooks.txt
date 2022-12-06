@@ -259,3 +259,445 @@
         {this.satate.Err.value} {/* 컴파일러에 보이지 않지만 브라우저에서는 학인 할 수 있는 에러 */}
         
     2) state 관련된 에러가 발생해하면 호출되는 메서드를 재정의해서 에러가 발생했다는 사실을 출력해주는 컴포넌트 ErrorBoundary.jsx 생성
+
+4. Hooks
+    => React 16.8 version 이상 부터 지원
+    => Class Component의 기능을 Function Component에서 사용할 수 있도록 해주는 기능이다.
+    => useState, useHistory, useEffect, useRef, ....
+    
+5. useState
+    => state를 함수 컴포넌트 안에서 사용할 수 있도록 해주는 hook이다.
+    => useState의 매개 변수는 state의 초기값이 되고 반환하는 데이터는 state와 state의 값을 변경할 수 있는 setter 함수의 배열이다.
+
+    1) 클래스형 컴포넌트와 클래스형 컴포넌트의 기능을 동일하게 해서 비교
+    [App.js]
+        import React, { Component, useState } from 'react';
+        import ErrorBoundary from './component/ErrorBoundary'
+        import Iteration from './component/Iteration'
+
+        // 클래스 형 컴포넌트
+        class ClassState extends Component {
+
+        /*
+        // 생성자를 만들지 않고 초기화가 가능하다.
+        state = { // JS 문법이 아님(React에서 사용하는 방식)
+            count : 0
+        } 
+        */
+
+        // JS 문법에서 생성자를 만들어서 인스턴스를 초기화 하는 방식
+        constructor(props) {
+            super(props);
+            this.state = {
+            count: 0
+            }
+        }
+
+        render() {
+            return (
+            <div>
+                <p>클릭을 {this.state.count} 번 수행</p>
+                <button onClick={
+                (e) => {
+                    this.setState({
+                    count: this.state.count + 1
+                    })
+                }}>
+                클릭
+                </button>
+            </div>
+            )
+        }
+        }
+
+
+        // 함수형 컴포넌트
+        const FucnState = () => {
+        const [count, setCount] = useState(0);
+
+        return (
+            <div>
+            <p>클릭을 {count}번 수행했습니다.</p>
+            <button onClick={(e) => setCount(count + 1)}> 클릭 </button>
+            </div>
+        )
+        }
+
+
+        const App = () => {
+        return (
+            <div>
+            {/* <ErrorBoundary>
+                <Iteration />
+            </ErrorBoundary> */}
+
+            <ClassState />
+            <FucnState/>
+            </div>
+        )
+        }
+
+        export default App
+
+6. useRef
+    => ref란 컴포넌트를 조작하기 위해서 붙이는 일종의 id와 같은 변수를 의미한다.
+    => useRef로 만들어진 변수는 useState로 만들어진 변수와 달리 변경된다고 해서 컴포넌트가 리랜더링 되지는 않는다.
+    => useRef(초기값) 으로 변수를 생성하고 컴포넌트나 DOM에 설정할 때는 ref 속성에 생성된 변수를 대입해주면 된다.
+
+    => 특정 Input에 focus 설정하기
+    [src/component/FuncRef.jsx]
+        import React, {useState, useRef} from 'react'
+
+        const FuncRef = () => {
+            const [userName, setUserName] = useState("")
+            const [nickName, setNickName] = useState("")
+
+            // react에서 다른 component나 DOM을 참조할 수 있는 변수를 생성
+            const nameInput = useRef();
+
+
+            // input에 입력된 값으로 useState의 속성의 값들을 전달하는 함수 
+            const onchangeUserNameInput = (e) => {
+                setUserName(e.target.value)
+            }
+
+            const onchangeNickrNameInput = (e) => {
+                setNickName(e.target.value)
+            }
+
+            const onClickResetBtn = (e) =>{
+                alert(`name : ${userName}\nnickname : ${nickName}`)
+                setUserName("");
+                setNickName("")
+                
+                // useRef를 이용해 이름 입력란으로 focus 설정
+                nameInput.current.focus();
+            }
+
+        return (
+            <div>
+                {/* 하나의 useState에 2개 이상의 속성을 다룬다면 사용할 tag에 name 속성의 값을 useState의 속성이름과 매칭 시킨다. */}
+                <input name='username' type='text' value={userName} onChange={onchangeUserNameInput} ref={nameInput}/><br/>
+                <input name='nickname' type='text' value={nickName} onChange={onchangeNickrNameInput}/><br/>
+                <button onClick={onClickResetBtn}>초기화</button>
+            </div>
+        )
+        }
+
+        export default FuncRef
+
+    [App.js]
+        import React, { Component, useState } from 'react';
+        import ErrorBoundary from './component/ErrorBoundary'
+        import Iteration from './component/Iteration'
+        import FuncRef from './component/FuncRef';
+
+        // 클래스 형 컴포넌트 state
+        class ClassState extends Component {
+
+        /*
+        // 생성자를 만들지 않고 초기화가 가능하다.
+        state = { // JS 문법이 아님(React에서 사용하는 방식)
+            count : 0
+        } 
+        */
+
+        // JS 문법에서 생성자를 만들어서 인스턴스를 초기화 하는 방식
+        constructor(props) {
+            super(props);
+            this.state = {
+            count: 0
+            }
+        }
+
+        render() {
+            return (
+            <div>
+                <p>클릭을 {this.state.count} 번 수행</p>
+                <button onClick={
+                (e) => {
+                    this.setState({
+                    count: this.state.count + 1
+                    })
+                }}>
+                클릭
+                </button>
+            </div>
+            )
+        }
+        }
+
+
+        // 함수형 컴포넌트 state
+        const FucnState = () => {
+        const [count, setCount] = useState(0);
+
+        return (
+            <div>
+            <p>클릭을 {count}번 수행했습니다.</p>
+            <button onClick={(e) => setCount(count + 1)}> 클릭 </button>
+            </div>
+        )
+        }
+
+        const App = () => {
+        return (
+            <div>
+            {/* <ErrorBoundary>
+                <Iteration />
+            </ErrorBoundary> */}
+
+            <ClassState />
+            <FucnState/>
+            <br/>
+            <FuncRef/>
+            <br/>
+        
+            </div>
+        )
+        }
+
+        export default App
+
+7. useEffect
+    => state가 변경된 후 수행할 side effect를 설정하는 Hook이다.
+    => Class의 Life Cycle 중에 componentDidMount와 componentDidUpdate, componentWillUnmount가 합쳐진 형태이다.
+
+    1) Class LifeCycle과 Effect 확인
+    => App.js 에 ClassEffect 클래스형 컴포넌트 생성해서 확인
+    [App.js]
+        import React, { Component, useState } from 'react';
+        import ErrorBoundary from './component/ErrorBoundary'
+        import Iteration from './component/Iteration'
+        import FuncRef from './component/FuncRef';
+
+        // 클래스 형 컴포넌트 state
+        class ClassState extends Component {
+
+        /*
+        // 생성자를 만들지 않고 초기화가 가능하다.
+        state = { // JS 문법이 아님(React에서 사용하는 방식)
+            count : 0
+        } 
+        */
+
+        // JS 문법에서 생성자를 만들어서 인스턴스를 초기화 하는 방식
+        constructor(props) {
+            super(props);
+            this.state = {
+            count: 0
+            }
+        }
+
+        render() {
+            return (
+            <div>
+                <p>클릭을 {this.state.count} 번 수행</p>
+                <button onClick={
+                (e) => {
+                    this.setState({
+                    count: this.state.count + 1
+                    })
+                }}>
+                클릭
+                </button>
+            </div>
+            )
+        }
+        }
+
+
+        // 함수형 컴포넌트 state
+        const FucnState = () => {
+        const [count, setCount] = useState(0);
+
+        return (
+            <div>
+            <p>클릭을 {count}번 수행했습니다.</p>
+            <button onClick={(e) => setCount(count + 1)}> 클릭 </button>
+            </div>
+        )
+        }
+
+
+        class ClassEffect extends Component{
+        // 생성자
+        constructor(props){
+            super(props);
+            console.log("가장 먼저 호출되는 메서드")
+
+            this.state = {
+            count: 0
+            }
+        }
+            // Component가 Mount된 후 호출되는 메서드
+            componentDidMount(){
+            console.log("마운트 된 후 호출되는 메서드");
+            document.title = `You clicked ${this.state.count} times`
+            }
+
+            // component가 Update된 후 호출되는 메서드
+            componentDidUpdate(){
+            console.log("업데이트 된 후 호출되는 메서드");
+            document.title = `You clicked ${this.state.count} time`
+            }
+            render(){
+            return(
+                <div>
+                <p>You clicked {this.state.count} times</p>
+                </div>
+            )
+            }
+        }
+
+        const App = () => {
+        return (
+            <div>
+            {/* <ErrorBoundary>
+                <Iteration />
+            </ErrorBoundary> */}
+
+            <ClassState />
+            <FucnState/>
+            <br/>
+            <FuncRef/>
+            <br/>
+            <ClassEffect/>
+            </div>
+        )
+        }
+
+        export default App
+
+        => 실행하고 콘솔을 확인하면 생성자와 마운트가 2번 되는 것을 확인할 수 있는데 이는 개발 환경에서 StrictMode 가 적용되어 그렇다.
+
+    2) useEffect 를 통해 함수형 컴포넌트에서 Effect 사용하기
+    [/src/component/FuncEffect.jsx]
+        import React, {useState, useEffect} from 'react'
+
+        const FrucEffect = () => {
+            // Class형 컴포넌트 Effect에서 생성자 초기화와 같은 역할
+            const [count, setCount] = useState(0);
+
+            useEffect(() => {
+                console.log("마운트와 업데이트가 끝나면 호출")
+                document.title = `You clicked ${count} times`
+            },[])
+
+        return (
+            <div>
+                <p>You clicked {count} times</p>
+                <button onClick={(e) => setCount(count + 1)}>클릭</button>
+            </div>
+        )
+        }
+
+        export default FrucEffect
+
+    [App.js]
+        import React, { Component, useState } from 'react';
+        import ErrorBoundary from './component/ErrorBoundary'
+        import Iteration from './component/Iteration'
+        import FuncRef from './component/FuncRef';
+        import FuncEffect from './component/FrucEffect'
+
+        // 클래스 형 컴포넌트 state
+        class ClassState extends Component {
+
+        /*
+        // 생성자를 만들지 않고 초기화가 가능하다.
+        state = { // JS 문법이 아님(React에서 사용하는 방식)
+            count : 0
+        } 
+        */
+
+        // JS 문법에서 생성자를 만들어서 인스턴스를 초기화 하는 방식
+        constructor(props) {
+            super(props);
+            this.state = {
+            count: 0
+            }
+        }
+
+        render() {
+            return (
+            <div>
+                <p>클릭을 {this.state.count} 번 수행</p>
+                <button onClick={
+                (e) => {
+                    this.setState({
+                    count: this.state.count + 1
+                    })
+                }}>
+                클릭
+                </button>
+            </div>
+            )
+        }
+        }
+
+
+        // 함수형 컴포넌트 state
+        const FucnState = () => {
+        const [count, setCount] = useState(0);
+
+        return (
+            <div>
+            <p>클릭을 {count}번 수행했습니다.</p>
+            <button onClick={(e) => setCount(count + 1)}> 클릭 </button>
+            </div>
+        )
+        }
+
+
+        class ClassEffect extends Component{
+        // 생성자
+        constructor(props){
+            super(props);
+            console.log("가장 먼저 호출되는 메서드")
+
+            this.state = {
+            count: 0
+            }
+        }
+            // Component가 Mount된 후 호출되는 메서드
+            componentDidMount(){
+            console.log("마운트 된 후 호출되는 메서드");
+            document.title = `You clicked ${this.state.count} times`
+            }
+
+            // component가 Update된 후 호출되는 메서드
+            componentDidUpdate(){
+            console.log("업데이트 된 후 호출되는 메서드");
+            document.title = `You clicked ${this.state.count} time`
+            }
+            render(){
+            return(
+                <div>
+                <p>You clicked {this.state.count} times</p>
+                <button onClick={(e) => this.setState({count: this.state.count + 1})}>클릭</button>
+                </div>
+            )
+            }
+        }
+
+        const App = () => {
+        return (
+            <div>
+            {/* <ErrorBoundary>
+                <Iteration />
+            </ErrorBoundary> */}
+
+            {/* <ClassState />
+            <FucnState/>
+            <br/>
+            <FuncRef/>
+            <br/> */}
+
+            {/* <ClassEffect/><br/> */}
+            <FuncEffect/>
+            </div>
+        )
+        }
+
+        export default App

@@ -1,26 +1,28 @@
-import { render } from '@testing-library/react'
-import React, {Componenet} from 'react'
+import React, {Component} from 'react';
 
-class ErrorBoundary extends Componenet{
+class ErrorBoundary extends Component {
     state = {
-        error: false
+        error:false
     }
+
     // 컴포넌트에서 예외가 발생하면 호출되는 메서드
     componentDidCatch(error, info) {
-        this.state = {
-            
-        }
+        this.setState({
+            error:true
+        })
+        console.log({error, info});
     }
 
-    render(){
-        if(this.state.error){
-            // error가 true 이면 출력
-            return <div>에러가 발생했습니다.</div>
-        }else{
-            // error가 false이면 하위 컴포넌트 출력
-            return this.props.children
+    render() {
+        // error 가 true 이면 출력
+        if(this.state.error) {
+            return <div>에러가 발생했습니다.</div>;
+        } 
+        // error가 false 이면 하위 컴포넌트 출력
+        else {
+            return this.props.children;
         }
-
     }
 }
-export default ErrorBoundary
+
+export default ErrorBoundary;
