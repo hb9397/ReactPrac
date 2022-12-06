@@ -108,9 +108,9 @@ const App = () => {
    // users 샘플데이터
    // 배열의 데이터를 수정하면 컴포넌트가 리랜더링 될 수 있도록 state로 변환한 것.
    const [users, setUsers] = useState([
-    {id: 1, username: "adam", email: "itawe@awef.dcc"},
-    {id: 2, username: "eve", email: "few@awef.dcc"},
-    {id: 3, username: "군계", email: "mon@awef.dcc"}
+    {id: 1, username: "adam", email: "itawe@awef.dcc", active: false},
+    {id: 2, username: "eve", email: "few@awef.dcc", active: true},
+    {id: 3, username: "군계", email: "mon@awef.dcc", active: false}
   ]);
 
   // 변수를 생성
@@ -145,10 +145,16 @@ const App = () => {
     // id가 일치하지 않는 데이터를 가지고 배열을 만들어서 수정하는 것.(실제로 삭제하는 것이 아니다.)
     setUsers(users.filter(user => user.id !== id));
   }
+
+  // 데이터를 수정하는 함수(배열의 데이터에 toggle 주기)
+  const onToggle = (id) =>{
+    // 클릭 이벤트에서 선택한 id값이 user state id와 같다면 해당 id
+    setUsers(users.map(user => user.id === id ? {...user, active : !user.active} : user))
+  }
   
   return (
     <div>
-      <UserList users={users} onRemoveBtn={onRemoveBtn}/>
+      <UserList users={users} onRemoveBtn={onRemoveBtn} onToggle={onToggle}/>
       <CreateUser username={username} email={email} onChangeInput={onChangeInput} onCreateBtn={onCreateBtn}/>
 
       {/* <ErrorBoundary>
