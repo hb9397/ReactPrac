@@ -181,5 +181,178 @@ React Styling
     3) CSSModule.module.css 파일과 같은 기능을 하게 새로운  SCSSModule.module.scss 로 변경해서 사용
 
     [css/SCSSModule.module.scss]
+        /* 파일 안에서만 사용하는 클래스 */
+        .wrapper{
+            background: black;
+            padding: 1em;
+            color: white;
+            font-size: 2rem;
+
+            /* 이렇게 되면 wrapper와 inverted 모두 있는 경우에만 Css가 적용된다. */
+            & .inverted{
+                color: black;
+                background: white;
+                border: 1px solid black;
+            }
+        }
+
+        .inverted{
+            color: black;
+            background: white;
+            border: 1px solid black;
+        }
+
+        /* 모든 곳에서 사용할 수 있는 클래스 - 이름을 수정하지 않는다. */
+        :global{
+            .somthing{
+                font-weight: 800;
+                color: aqua;
+            }
+        }
 
     [src/component/CSSModuel.jsx]
+        import React from 'react'
+        import styles1 from'../css/CSSModule.module.css'
+        import classNames from 'classnames/bind'
+        import styles2 from'../css/SCSSModule.module.scss'
+
+
+        // cx 안에서는 styles 생략하는 것이 가능.
+        const cx1 = classNames.bind(styles1)
+        const cx2 = classNames.bind(styles2)
+
+        export const CSSModule = () => {
+        return (
+            <div className={`${styles1.wrapper} ${styles1.inverted}`}>
+                처음 사용해보는 
+                {/* :global이 적용된 css요소는 클래스네임.적용할 css 형태가 아니라 바로 css요소 이름으로 작성 */}
+                <span className='somthing'>CSS Modeule</span>
+
+                <div className={cx1('wrapper', 'inverte')}>
+                    classnames 라이브러리 사용하기
+                </div><br/>
+
+                <span className='somthing'>SCSS Modeule</span>
+                <div className={cx2('wrapper', 'inverte')}>
+                    SCSS 사용해 보기
+                </div>
+            </div>
+        )
+        }
+
+        export default CSSModule
+
+    4) scss 파일 생성 후 적용
+        => App.scss파일 생성후 적용
+
+    [App.scss]
+        /* 태그에 box클래스가 있고 blue 클래스가 있으면 마우스를 해당 태그에 올렸을 때 CSS 적용 */
+        /* 태그들이 계층이 많아질 수록 CSS의 선택자와 의사선택자 등이 옆으로 코드를 나열해야하지만 scss를 사용하면 계층구조로 나타낼 수 있다. */
+        .box{
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            border: 1px solid black;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            
+            &.blue{
+                background: blue;
+            }
+
+            &:hover{
+                background: yellow;
+            }
+
+            /* 계층 구조가 아니라 그냥 box의 자식 클래스 */
+            .box-inside{
+                background: black;
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+    [App.js]
+        import React from 'react'
+        import  CSSModule  from './component/CSSModule'
+
+        import classNames from 'classnames'
+        import styles from './App.scss'
+
+        const cx = classNames.bind(styles)
+
+        const App = () => {
+        const isBlue = true;
+
+
+        return (
+            <div>
+            <CSSModule/><br/>
+            <div className={cx('box', {blue: isBlue})}>
+                <div className={cx('box-inside')}/>
+            </div>
+            <div className={cx('box-inside')}/> {/* App.scss에서 box의 자식으로 만들었기 때문에 부모에 box클래스를 가져오지 않는다면 설정되지 않는다. */}
+            </div>
+        )
+        }
+
+        export default App
+
+    5) 변수와 믹스 인 사용
+        => $변수명: 값 ; 의 형태로 변수를 만들어서 다른곳에서 @import를 통해서 사용이 가능하다.
+
+        => 믹스 인 은 여러 속성을 모아놓은 것으로 아래와 같이 만들 수 있다.
+            @mixin 이름(){
+                속성: 값
+                ...
+            }
+        => 다른 곳에서 @include 이름(); 으로 다른 곳에서 불러올 수 있다.
+        
+        => 변수와 믹스인은 자주사용하는 속성(디자인)이 있을 때 유용하게 사용한다.
+        => src 디렉토리에 styles 디렉토리를 생성한다.
+
+        => 공통된 스타일 속성을 정의할 util.scss 파일을 생성하고 작성하고 App.scss에 불러와서 사용한다.
+        [src/css/util.scss]
+            $size: 100px;
+
+            @mixin place-at-center {
+                top: 70%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+        [App.scss]
+            @import './css/util.scss'; // $변수와 @mixin을 사용하기 위해 불러온다.
+
+            /* 태그에 box클래스가 있고 blue 클래스가 있으면 마우스를 해당 태그에 올렸을 때 CSS 적용 */
+            /* 태그들이 계층이 많아질 수록 CSS의 선택자와 의사선택자 등이 옆으로 코드를 나열해야하지만 scss를 사용하면 계층구조로 나타낼 수 있다. */
+            .box{
+                display: inline-block;
+                width: $size;
+                height: $size;
+                border: 1px solid black;
+                position: fixed;
+                
+                @include place-at-center();
+                
+                &.blue{
+                    background: blue;
+                }
+
+                &:hover{
+                    background: yellow;
+                }
+
+                /* 계층 구조가 아니라 그냥 box의 자식 클래스 */
+                .box-inside{
+                    background: black;
+                    width: 50px;
+                    height: 50px;
+                }
+            }
+        
+        => 애플리케이션을 개발하다 보면 컴포넌트 1개와 scss 파일 1개가 쌍으로 만들어지는 경우가 많은데 여러 컴포넌트를 만들다보면
+        
+        공통적으로 사용하는 scss 라이브러리들이 있는데 이러한 라이브러리들을 util.scss 에서 import하면 다른 곳에서는 별도의 import 없이 사용하는 것이 가능하다.

@@ -1,0 +1,28 @@
+@import './css/util.scss'; // $변수와 @mixin을 사용하기 위해 불러온다.
+
+/* 태그에 box클래스가 있고 blue 클래스가 있으면 마우스를 해당 태그에 올렸을 때 CSS 적용 */
+/* 태그들이 계층이 많아질 수록 CSS의 선택자와 의사선택자 등이 옆으로 코드를 나열해야하지만 scss를 사용하면 계층구조로 나타낼 수 있다. */
+.box{
+    display: inline-block;
+    width: $size;
+    height: $size;
+    border: 1px solid black;
+    position: fixed;
+    
+    @include place-at-center();
+    
+    &.blue{
+        background: blue;
+    }
+
+    &:hover{
+        background: yellow;
+    }
+
+    /* 계층 구조가 아니라 그냥 box의 자식 클래스 */
+    .box-inside{
+        background: black;
+        width: 50px;
+        height: 50px;
+    }
+}
