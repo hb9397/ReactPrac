@@ -354,5 +354,150 @@ React Styling
             }
         
         => 애플리케이션을 개발하다 보면 컴포넌트 1개와 scss 파일 1개가 쌍으로 만들어지는 경우가 많은데 여러 컴포넌트를 만들다보면
-        
+
         공통적으로 사용하는 scss 라이브러리들이 있는데 이러한 라이브러리들을 util.scss 에서 import하면 다른 곳에서는 별도의 import 없이 사용하는 것이 가능하다.
+
+    6) SCSS 라이브러리
+        => SCSS 가 이미 적용된 라이브러리이다.
+        => 반응형 웹 디자인 (디바이스 크기에 상관없이 동일한 컨텐츠를 사용할 수 있도록 하는 것)
+        
+        => include-media 라이브러리
+        => 색상
+            open-color(색상을 자주 사용하는 색상 이름과 숫자를 이용해서 강도를 설정하는 형태)
+        
+        => icon
+            react-icons 사용(docs도 있다.)
+
+        => include-media open-color react-icons 라이브러리 설치
+            yarn add include-media open-color react-icons
+
+        => util.scss 에서 include-media, open-color, react-icons 가져오기
+        [util.scss]
+            @import '~open-color/open-color';
+            @import '~include-media/dist/include-media';
+
+            $breakpoints: (
+                small: 367px,
+                medium: 768px,
+                large: 1024px,
+                huge: 1200px,
+            );
+
+            $size: 100px;
+
+            @mixin place-at-center {
+                top: 70%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            
+        => Button.jsx 파일 생성
+        [/src/component/Button.jsx]
+            import React from 'react'
+            import styles from './Button.scss';
+            import classNames from 'classnames/bind'
+
+            const cx = classNames.bind(styles)
+
+            // Props를 받아온 것 중 children으로 넘겨준 것은 children으로 받고 나머지는rest 로 받는다.
+            const Button = ({children, ...rest}) => {
+            return (
+                <div className={cx('button')}{...rest}>
+                    {children}
+                </div>
+            )
+            }
+
+            export default Button
+
+        => Button.scss 파일 생성
+        [/css/Button.scss]
+            @import '../css/util.scss';
+
+            .button{
+                background: $oc-green-7;
+                transition: all .2 ease-in;
+                display: inline-block;
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+                text-align: center;
+                color: white;
+                position: fixed;
+                font-size: 2rem;
+                font-weight: 500;
+                border-radius: 4px;
+                cursor: pointer;
+
+                @include place-at-center();
+
+                width: 1200px;
+
+                // 반응형 웹 디자인
+                @include media("<huge"){
+                    width: 1024px;
+                }
+
+                @include media("<large"){
+                    width: 768px;
+                }
+
+                @include media("<medium"){
+                    width: 90%;
+                }
+
+                &:hover{
+                    background: $oc-green-6;
+                }
+
+                &:active{ // 버튼 같은 것이 눌릴 때 조금 이동하게 만들면 시각적 효과의 상승을 기대할 수 있다.
+                    margin-top: 3px;
+                    background: $oc-green-8;
+                }
+            }
+        
+        => App.js에 Button.jsx 올리고 확인
+
+        [App.js]
+            import React from 'react'
+            import  CSSModule  from './component/CSSModule'
+
+            import classNames from 'classnames'
+            import styles from './App.scss'
+
+            import Button from './component/Button'
+
+            const cx = classNames.bind(styles)
+
+            const App = () => {
+            const isBlue = true;
+
+
+            return (
+                <div>
+                <Button>버튼</Button>
+                {/* <CSSModule/><br/>
+                <div className={cx('box', {blue: isBlue})}>
+                    <div className={cx('box-inside')}/>
+                </div>
+                <div className={cx('box-inside')}/> */} {/* App.scss에서 box의 자식으로 만들었기 때문에 부모에 box클래스를 가져오지 않는다면 설정되지 않는다. */}
+                </div>
+            )
+            }
+
+            export default App
+
+7. Material Design
+    1) 개요
+        => 웹과 앱을 통틀어 모든 개발 플랫폼에서 UX를 하나로 묶기 위해서(Progressive Web Design) 구글이 제시한 디자인 방식이다.
+        => Material Design은 Progressive Web Design 중 구글이 제시한 디자인 방식이다.
+        => https://materializecss.com 에서 scss와 css에 대한 docs 들을 확인 할 수 있다.
+
+    2) 사용방법
+        
+        - CDN 방식
+            스타일시트의 외부 링크를 이용하는 것으로 네트워크를 사용할 수 없는 상태가 되면 적용되지 않는다.
+            
+        - scss 파일이나 css 파일을 다운로드 받아서 적용하는 방식
+            네트워크 사용 여부와 상관없이 사용할 수 있지만 앱의 크기가 커진다.
+
+

@@ -1,0 +1,42 @@
+@import '../css/util.scss';
+
+.button{
+    background: $oc-green-7;
+    transition: all .2 ease-in;
+    display: inline-block;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    text-align: center;
+    color: white;
+    position: fixed;
+    font-size: 2rem;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+
+    @include place-at-center();
+
+    width: 1200px;
+
+    // 반응형 웹 디자인
+    @include media("<huge"){
+        width: 1024px;
+    }
+
+    @include media("<large"){
+        width: 768px;
+    }
+
+    @include media("<medium"){
+        width: 90%;
+    }
+
+    &:hover{
+        background: $oc-green-6;
+    }
+
+    &:active{ // 버튼 같은 것이 눌릴 때 조금 이동하게 만들면 시각적 효과의 상승을 기대할 수 있다.
+        margin-top: 3px;
+        background: $oc-green-8;
+    }
+}
