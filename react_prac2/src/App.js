@@ -2,6 +2,7 @@ import React, { Component, useState, useRef, useMemo } from 'react';
 import UserList from './component/UserList';
 import CreateUser from './component/CreateUser';
 import AverageUseMemo from './component/AverageUseMemo';
+import AverageUseCallback from './component/AverageUseCallback';
 /* import ErrorBoundary from './component/ErrorBoundary'
 import Iteration from './component/Iteration'
 import FuncRef from './component/FuncRef';
@@ -170,6 +171,8 @@ const App = () => {
       <div>활성화된 유저 수: {count}</div><br/>
 
       <AverageUseMemo/>
+      <br/>
+      <AverageUseCallback/>
 
       {/* <ErrorBoundary>
         <Iteration />
