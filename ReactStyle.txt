@@ -619,3 +619,113 @@ https://jsonplaceholder.typicode.com/users 샘플 json 이용
     1) 서버에서 데이터 받아오는 방법
         => AJAX 이용
             load 이벤트와 error 이벤트를 처리하면된다.
+
+        => Fetch API 이용
+            Callback이 아니라 Promise를 이용하는 API 방식이다.
+
+        => axios 라이브러리 사용
+            yarn add axios로 라이브러리를 먼저 설치한다.
+            사용할 컴포넌트에서 import 한다.
+
+        [App.js] 에서 예시 적용
+            import React from 'react'
+            import CSSModule from './component/CSSModule'
+
+            import classNames from 'classnames'
+            import styles from './App.scss'
+
+            import Button from './component/Button'
+
+            import StyledComponent from './component/StyledComponent'
+
+            import axios from 'axios'
+
+            const cx = classNames.bind(styles)
+
+            const App = () => {
+            const isBlue = true;
+
+
+            return (
+                <div>
+                <StyledComponent />
+                <nav>
+                    <div className='nav-wrapper'>
+                    <div>
+                        리액트
+                    </div>
+                    </div>
+                </nav>
+                <div>
+                    머터리얼 디자인
+                </div>
+                <Button>버튼</Button>
+                <div>
+                    <button onClick={(e) => {
+                    let request = new XMLHttpRequest();
+                    request.open('GET', 'https://jsonplaceholder.typicode.com/users');
+
+                    // POST 방식일 때는 send에 파라미터를 대입한다
+                    request.send('');
+
+                    // 데이터를 가져오는데 성공했을 때 load 이벤트 처리
+                    request.addEventListener('load', () => {
+                        let data = JSON.parse(request.responseText);
+                        console.log(data);
+                    });
+
+                    // error 발생했을 때 error 이벤트 처리
+                    request.addEventListener('error', (error) => {
+                        console.log(error);
+                    })
+                    }}>AJAX를 이용한 데이터 다운로드</button><br />
+
+                    <button onClick={(e) => {
+                    fetch('https://jsonplaceholder.typicode.com/users')
+                    .then((res) => res.json())
+                    .then((data) => console.log(data))
+                    .catch((err) => console.log(err.message))
+                    }
+                    }>
+                    Fetch API를 이용한 데이터 다운로드
+                    </button><br />
+
+                    <button onClick={(e) => {
+                    axios.get('https://jsonplaceholder.typicode.com/users')
+                    .then(res => console.log(res.data))
+                    .catch(err => console.log(err))
+                    }}>
+                    axios 라이브러리를 이용한 데이터 다운로드
+                    </button>
+                </div>
+                {/* <CSSModule/><br/>
+                <div className={cx('box', {blue: isBlue})}>
+                    <div className={cx('box-inside')}/>
+                </div>
+                <div className={cx('box-inside')}/> */} {/* App.scss에서 box의 자식으로 만들었기 때문에 부모에 box클래스를 가져오지 않는다면 설정되지 않는다. */}
+                </div>
+            )
+            }
+
+            export default App
+
+    2) Node Server 에서의 CORS 설정
+        => Node Server에서 cors 를 설정해줘야 SOP로 인한 클라이언트-서버 간 도메인이 달라서 접근할 수 없는 문제를 해결할 수 있다.
+        => yarn add cors 로 cors 라이브러리 설치
+        => 서버 실행 파일에 추가
+            const cors = require('cors');
+            app.use(cors());
+
+    3) 서버를 수정할 수 없을 때는 Proxy를 설정한다.
+        => 첫번째로 package.json 파일에 설정을 추가하는 방법으로 "proxy":"서버의 도메인" 을 추가한다.
+        => 요청을 할 때 /api/도메인 뒤의 url로 요청한다.
+
+        => 두번째는 http-proxy-middleware 라이브러리를 이용하는 방법으로 yarn add http-proxy-middleware 로 라이브러리를 먼저 설치한다.
+        => src 디렉토리에 setupProxy.js 파일을 만들고 아래와 같이 작성한다.
+            -> const {createProxyMiddleware} = require('http-proxy-middleware');
+               module.exports = (app) => {
+                app.use(createProxyMiddleware('/클라이언트 공통 URL', {
+                    target: '서버URL',
+                    changeOrigin: true
+                }))
+               }
