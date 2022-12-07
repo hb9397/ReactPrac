@@ -6,6 +6,8 @@ import styles from './App.scss'
 
 import Button from './component/Button'
 
+import StyledComponent from './component/StyledComponent'
+
 const cx = classNames.bind(styles)
 
 const App = () => {
@@ -14,6 +16,17 @@ const App = () => {
 
   return (
     <div>
+      <StyledComponent/>
+      <nav>
+        <div className='nav-wrapper'>
+          <div>
+            리액트
+          </div>
+        </div>
+      </nav>
+      <div>
+        머터리얼 디자인
+      </div>
       <Button>버튼</Button>
       {/* <CSSModule/><br/>
       <div className={cx('box', {blue: isBlue})}>

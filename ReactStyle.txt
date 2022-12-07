@@ -500,4 +500,122 @@ React Styling
         - scss 파일이나 css 파일을 다운로드 받아서 적용하는 방식
             네트워크 사용 여부와 상관없이 사용할 수 있지만 앱의 크기가 커진다.
 
+        P.S. CDN(Content Delivery-Distribution Network)
+            => 서버와 사용자 사이의 물리적인 거리를 줄여서 컨텐츠 로딩에 소요되는 시간을 최소화하기 위해서 동일한 콘텐츠르 여러 네트워크에
+            분산저장해서 요청을 하면 가장 가까운 Network에서 다운로드 하도록 해주는 서비스를 의미한다.
 
+            => 물리적인 거리가 늘어나면 당연히 느려지고 홉의 개수(데이터의 출발지와 목적지 까지의 거리의 경로의 일부분)가 늘어날 수 밖에 없으며 
+            홉의 개수가 가장 적은 곳에서 데이터를 받을 수 있도록 하는 것이 CDN이다.
+
+            => CSS나 JS를 사용할 때 min. 이 붙는 것이 있고 붙지 않는 것이 있는데 min. 이 붙은 것은 공백과 엔터를 전부 없애 사이즈를 줄인 것이고 min.
+            이 없는 것은 공백과 엔터를 이용해서 읽기 좋게 만들어놓은 것이다.
+
+        => CDN 방식으로 CSS 적용하기
+            => public 디렉토리의 index.html <head> 태그 내부에 아래 추가
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"/>
+
+         => App.js 수정하고 <nav>태그 내부의 div에 적용된 것과 바깥 div 비교
+        [App.js]
+            import React from 'react'
+            import  CSSModule  from './component/CSSModule'
+
+            import classNames from 'classnames'
+            import styles from './App.scss'
+
+            import Button from './component/Button'
+
+            const cx = classNames.bind(styles)
+
+            const App = () => {
+            const isBlue = true;
+
+
+            return (
+                <div>
+                <nav>
+                    <div className='nav-wrapper'>
+                    <div>
+                        리액트
+                    </div>
+                    </div>
+                </nav>
+                <div>
+                    머터리얼 디자인
+                </div>
+                <Button>버튼</Button>
+                {/* <CSSModule/><br/>
+                <div className={cx('box', {blue: isBlue})}>
+                    <div className={cx('box-inside')}/>
+                </div>
+                <div className={cx('box-inside')}/> */} {/* App.scss에서 box의 자식으로 만들었기 때문에 부모에 box클래스를 가져오지 않는다면 설정되지 않는다. */}
+                </div>
+            )
+            }
+
+            export default App
+
+        => 다운로드 받아서 직접 넣어서 사용하는 방법으로 CSS 적용하기
+            -> https://materializecss.com 에 접속해서 직접 소스코드를 받아 압축해제 후 sass라는 폴더를 프로젝트의 src와 같은 디렉토리에 옮긴다.
+            -> sass 디렉토리의 materialize.scss만 import해서 사용하면 된다.
+
+6. styled-components
+    1) 개요
+        => JS 파일 안에 스타일을 선언하는 방식으로 CSS IN JS 라고 한다.
+        => 이전의 방식과 다르게 컴포넌트와 디자인을 분리하지 않고 컴포넌트와 디자인을 하나의 파일로 만들어서 사용하는 방식으로 컴포넌트를 배치하면 자동으로 디자인이 적용되는 방식이다.
+        => react-icons의 각 icon 들이 해당 방법으로 구현되어 있으며 icon을 컴포넌트를 삽입하는 형태로 추가하면 이미 설정된 style이 적용되어서 출력된다.
+        
+        => 이러한 라이브러리의 종류는 https://github/MicheleBertoli/css-in-js에서 확인 가능하다.
+            -> 그 중 aproditae는 에어비엔비에서 사용하고 있으며 styled-components 대신에 최근에는 emotion도 많이 사용한다.
+            -> 위의 styled-component에 가면 예제를 확인할 수 있다.
+
+    2) styled-components를 이용한 버튼 만들기
+        => yarn add styled-components 로 라이브러리 설치
+
+        => StyledComponent.jsx 파일 생성 후 App.js에 삽입
+        [StyledComponent]
+            import React from 'react'
+            import styled, {css} from 'styled-components'
+
+            // 아래의 ``안에  스타일을 저장
+            const Box = styled.div`
+            background: ${props => props.color || 'blue'};
+            padding: 1rem;
+            display: flex`;
+
+            const Button = styled.button`
+            backgoround: white;
+            color: balck;
+            border.radius: 4px;
+            padding: 0.5rem;
+            display: flex);
+            justify-contenet: center;
+            box-sizing: border-box;
+            font-size = 200;
+            font weight; 600
+
+            &:hover{background: rgba(255, 255, 255,0.9)}
+
+            & + button{
+                margin-left:1rem;
+            }`
+
+
+            const StyledComponent = () => {
+            return (
+                <div>
+                    <Box color='black'>
+                        <Button>안녕하세요</Button>
+                        <Button>반갑습니다</Button>
+                    </Box>
+                </div>
+            )
+            }
+
+            export default StyledComponent
+
+
+7. 서버에서 데이터 받아오기
+https://jsonplaceholder.typicode.com/users 샘플 json 이용
+    1) 서버에서 데이터 받아오는 방법
+        => AJAX 이용
+            load 이벤트와 error 이벤트를 처리하면된다.
