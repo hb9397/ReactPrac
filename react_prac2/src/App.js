@@ -1,6 +1,7 @@
 import React, { Component, useState, useRef, useMemo } from 'react';
 import UserList from './component/UserList';
 import CreateUser from './component/CreateUser';
+import AverageUseMemo from './component/AverageUseMemo';
 /* import ErrorBoundary from './component/ErrorBoundary'
 import Iteration from './component/Iteration'
 import FuncRef from './component/FuncRef';
@@ -166,7 +167,9 @@ const App = () => {
     <div>
       <UserList users={users} onRemoveBtn={onRemoveBtn} onToggle={onToggle}/>
       <CreateUser username={username} email={email} onChangeInput={onChangeInput} onCreateBtn={onCreateBtn}/>
-      <div>활성화된 유저 수: {count}</div>
+      <div>활성화된 유저 수: {count}</div><br/>
+
+      <AverageUseMemo/>
 
       {/* <ErrorBoundary>
         <Iteration />
