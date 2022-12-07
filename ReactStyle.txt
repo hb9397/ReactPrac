@@ -1,0 +1,71 @@
+[react_prac3]
+React Styling
+    => 스타일 적용
+
+1. Styling 방식
+    => 일반 CSS 사용
+    
+    => Sass
+        Css 전처리기(pre-process)를 이용하는 방식으로 확장된 CSS 문법을 사용한다.
+        
+    => CSS Module
+        스타일을 작성할 때 CSS 클래스 이름이 다른 CSS클래스 이름과 충돌하지 않도록 파일마다 고유한 이름을 자동으로 생성해주는 옵션
+    
+    => styled-components
+        컴포넌트 안에 스타일을 내장 시키는 방식으로 동일한 스타일이 적용된 컴포넌트를 사용하는 방식이다.
+        실제 애플리케이션 제작 작업을 할 때 이런 방식으로 만들어진 컴포넌트들을 많이 사용한다.
+
+2. 일반 CSS 적용
+    1) 개요
+        => webpack의 css-loader를 이용해서 일반 CSS를 불러오는 방식
+        => react 프로젝트를 생성하면 App.js가 App.css를 불러오는 방식
+
+    2) Naming
+        => react 프로젝트에서는 컴포넌트-클래스이름 의 형태로 Naming한다.
+        => Ex> App-header는 App 컴포넌트 안에 header라는 클래스를 의미하는 것이다.
+        
+        => BEM(Block Element Modifier) 방법으로 CSS에서는 가장 많이 사용된다.
+            -> 각각의 요소는 -나 _로 구분한다.
+            -> 블럭이름__요소이름__수정자이름 형태로 Naming한다.
+
+        => SMACSS(Scalable and Modular Architecture for CSS) - 확장형 모듈식 구조
+            -> Base에는 아무런 접두어도 붙이지 않고 Layout과 관련된 경우는  I- 이름을 정하는 방식이다.
+            -> state의 경우는 is- 또는 s- 등을 추가 하는 것으로 용도를 파악하는 것이 편리하다.
+
+        => 이 외에 OOCSS도 있다.
+
+    3) App.css 수정으로 예시 보기
+        
+        => .App a {
+            color: #61dafb;
+            }
+            -> App 컴포넌트 내의 a태그의 색상을 변경한다는 의미.
+
+        
+3. CSS Module
+    1) 개요
+        => Css를 불러와서 사용할 때, 클래스 이름을 고유한 값으로 만들어서 적용한다.
+        => [파일이름]_[클래스이름]_[해시값] 을 추가해서 클래스 이름을 부여한다.
+        => 사용하는 방법은 css파일의 확장자를 이름.module.css 로 만들면 된다.
+        => 이 기능을 사용할 때는 css 파일의 클래스 이름을 일반적인 이름으로 사용하면 된다.
+        => 별도의 클래스 이름을 부여하지 못하도록 하고자 하는 경우에는 클래스 이름 앞에 :global을 추가하면 된다.
+
+    2) 적용
+        => CSSModuel.module.css 파일을 생성
+        [CSSModuel.module.css]
+            /* 파일 안에서만 사용하는 클래스 */
+            .wrapper{
+                background: black;
+                padding: 1em;
+                color: white;
+                font-size: 2rem;
+            }
+
+            /* 모든 곳에서 사용할 수 있는 클래스 - 이름을 수정하지 않는다. */
+            :global .somthing{
+                font-weight: 800;
+                color: aqua;
+            }
+
+        => CSSModuel.module.css 를 적용할 컴포넌트 CSSModuel.jsx 생성
+            [CSSModuel.jsx]
