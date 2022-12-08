@@ -20,7 +20,7 @@ const ToDoListItem = ({ toDo, onClickRemoveBtn, onClickCheckBoxToggle, style }) 
     }, [onClickRemoveBtn, id, text])
 
     return (
-        <div className='ToDoListItem-virtualized'>
+        <div className='ToDoListItem-virtualized' style={style}>
             <div className='ToDoListItem'>
                 <div className={cn('checkbox', { checked })} onClick={(e) => { onClickCheckBoxToggle(id) }}>
                     {checked ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
