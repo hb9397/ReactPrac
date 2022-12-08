@@ -187,9 +187,90 @@
 
     4) 데이터 목록화면(ToDoListItem.jsx, ToDoList.jsx)
     => ToDoListItem.jsx 는 하나하나의 항목을 출력한다.
-    => ToDoList.jsx 는 작성된 하나하나의 항목인 ToDoListItem 을 List 방식으로 출력한다.
     => 하나하나의 항목인 ToDoListItem.jsx의 스타일 적용을 위한 ToDoListItem.scss 파일을 생성하고 작성한다.
 
+    => ToDoList.jsx 는 작성된 하나하나의 항목인 ToDoListItem 을 List 방식으로 출력한다.
+   
+
     [ToDoListItem.jsx]
+    import React from 'react'
+    import '/ToDoListItem.scss'
+    import {
+        MdCheckBoxOutlineBlank,
+        MdCheckBox,
+        MdRemoveCircleOutline
+    } from 'react-icons'
+
+    const ToDoListItem = () => {
+    return (
+        <div className='ToDoListItem'>
+            <div className='checkbox'>
+                <MdCheckBoxOutlineBlank/>
+                <div className='text'>할 일</div>
+            </div>
+            <div className='remove'>
+                <MdRemoveCircleOutline/>
+            </div>
+        </div>
+    )
+    }
+
+    export default ToDoListItem
+
+    [ToDoListItem.scss]
+    .ToDoListItem{
+        padding:1rem;
+        display: flex;
+        align-items: center;
+        
+        &:nth-child(even){ // list의 홀수행 짝수행 다르게 표현하기 위한 설정
+            background: #f7f9fa; 
+        }
+
+        .checkbox{
+            cursor: pointer;
+
+            flex: 1;
+            display: flex;
+            align-items: center;
+            
+            svg{
+                font-size: 1.5rem;
+            }
+
+            .text{
+                margin-left: 0.5rem;
+                flex: 1;
+            }
+
+            &.checked{ // 체크 되었을 때
+                svg{
+                    color: #22b8cf;
+                }
+                
+                .text{
+                    color: #adb5bd;
+                    text-decoration: line-through; // 취소선
+                }
+            }
+        }
+
+        .remove{ // 삭제 아이콘
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            color: #ff6b6b;
+            
+            cursor: pointer;
+
+            &:hover{
+                color: #ff8787;
+            }
+        }
+
+        & + &{
+            border-top: 1px solid #dee2e6
+        }
+    }
 
     [ToDoList.jsx]
