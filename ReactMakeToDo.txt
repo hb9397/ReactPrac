@@ -1143,7 +1143,7 @@
     [ToDoListItem.jsx]
 
 
-** 데이터 불변성 **
+** 데이터 불변성(매우 중요_CS에서도 코딩에서도) **
 1. 불변성 
     => React에서는 props와 useState로 만든 데이처는 원본을 수정할 수 없다.
     => Recat는 Virtual DOM의 개념을 사용해서 랜더링을 구현한다.
@@ -1163,4 +1163,47 @@
         -> for each도 return하지 않지만 for each는 함수에 순회해서 접근하는 것 말고는 작업하지 않는다.
 
     => 하지만 객체는 return을 해주는 함수가 거의 없으므로 복제해서 사용하는 경우가 많기 때문에 let obj3 = {...obj1}과 같이 복제해서 작업해야 한다.
+    => {...객체}, [...배열] 은 spread 연산이라고 한다.
+    => spread 연산은 얕은 복사에 해당한다.
+
+    => 위와 같이 객체나 배열과 같이 2개 이상의 복제 문제를 해결하기 위해 얕은복사(weak copy)와 깊은복사(deep copy)가 있다.
+    
+    => 얕은 복사(가장 바깥쪽만 복사한다.)의 경우
+        let original = {num : 2000}
+        let weakcopy = Object.assign({}, original);
+        weakcopy.num = 3000;
+        
+        console.log(weakcopy);
+        console.log(original);
+    => 확인하면 서로 값이 다른것을 확인할 수 있다.
+
+    => 이때 얕은 복사의 문제점은 객체안에 존재하는 객체의 속성이나 배열 내부의 데이터는 여전히 같은 참조를 가리키게 복제 된다는 것이다.
+        original = {
+            num : 1000,
+            ar:["a", "b"]
+        }
+        // spread연산도 얕은 복사에 해당한다.
+        let weakcopy = {...original}
+        weakcopy.ar[0] = "이런"
+
+        console.log(weakcopy);
+        console.log(original);
+    => 얕은 복사를 해도 객체 값의 참조를 다르게 할 수 있어도 안에 존재하는 객체의 속성이나 배열 내부의 데이터의 참조는 다르게 할 수 없어서 객체 내부의 객체속성이나 배열요소를 변경하면 동일하게 변경된다.
+
+    => 깊은 복제는 JS 내부 라이브러리에는 존재하지 않는다.
+    => 깊은 복사는 재귀적으로 복제하는 것을 뜻한다.
+    => 편법으로 데이터만 있는 경우에는 JSON 문자열로 변환후 JSON 파싱을 수행하는 방법이 있다.(JSON은 함수가 없기 때문에 함수의 HashCode참조를 다르게 할 방법으로는 사용할 수 없다.)
+        
+        original = {
+            num : 1000,
+            ar:["a", "b"]
+        }
+        let deepcopy = JSON.pars(JSON.stringfy(original));
+        deepcopy.ar[0] = "이런"
+        console.log(deepcopy);
+        console.log(original);
+    => original의 배열 요소와 복제한 deepcopy 객체의 배열요소가 서로 다른 것을 확인한다.
+
+    => 함수도 복제하고 싶은 경우 함수를 직접 구현하거나 외부 라이브러리의 도움을 받는다.
+    => immer나 loadsh 같은 외부 라이브러리가 이를 수행할 수 있다.
     
