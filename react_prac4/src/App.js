@@ -35,7 +35,7 @@ const App = () => {
   ]);
 
   // 아이디를 위한 변수를 생성한다.
-  const nextId = useRef(5);
+  const nextId = useRef(6);
 
   // 삽입을 처리하기 위한 함수
   // toDos에 변화가 생기면 함수를 만들지만 그렇지 않다면 기존 함수의 결과를 사용한다.
@@ -52,18 +52,22 @@ const App = () => {
 
   // 데이터 삭제 처리를 위한 함수
   const onClickRemoveBtn = useCallback((id) => {
-    toDos.filter(toDo => (
+    setToDos(toDos.filter(toDo => (
       toDo.id !== id
-      
-    ))
-    console.log(id)
-  })
+    )));
+  },[toDos])
+
+  // 데이터 수정을 위한 함수
+  // toDo의 id 값과 매개변수로 받은 id가 일치하면 checked값을 변경하고 그렇지 않을 때는 그대로 둔다.
+  const onClickCheckBoxToggle = useCallback((id) => {
+    setToDos(toDos.map(toDo => toDo.id === id ? {...toDo, checked: !toDo.checked}: toDo))
+  }, [toDos])
 
   return (
     <ToDoTemplate>
       <ToDoInsert onClickInsertBtn={onClickInsertBtn}/>
       {/* 샘플데이터 todDos useState를  toDos이름으로 ToDoList로 넘겨준다.*/}
-      <ToDoList toDos={toDos} onClickRemoveBtn={onClickRemoveBtn}/>
+      <ToDoList toDos={toDos} onClickRemoveBtn={onClickRemoveBtn} onClickCheckBoxToggle={onClickCheckBoxToggle} />
     </ToDoTemplate>
   )
 }

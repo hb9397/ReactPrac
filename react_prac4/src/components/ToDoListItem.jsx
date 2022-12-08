@@ -7,7 +7,7 @@ import {
 } from 'react-icons/md'
 import cn from 'classnames';
 
-const ToDoListItem = ({toDo, onClickRemoveBtn}) => {
+const ToDoListItem = ({toDo, onClickRemoveBtn, onClickCheckBoxToggle}) => {
 
     // ToDoList 로 부터 넘어온 데이터 중 text와 checked만 분해
     const {text, checked, id} = toDo;
@@ -21,7 +21,7 @@ const ToDoListItem = ({toDo, onClickRemoveBtn}) => {
 
   return (
     <div className='ToDoListItem'>
-        <div className={cn('checkbox', {checked})}>
+        <div className={cn('checkbox', {checked})} onClick={(e) => {onClickCheckBoxToggle(id)}}>
             {checked? <MdCheckBox/> : <MdCheckBoxOutlineBlank/>}
             <div className='text'>{text}</div>
         </div>

@@ -3,14 +3,14 @@ import ToDoListItem from './ToDoListItem'
 
 import './ToDoList.scss'
 
-const ToDoList = ({toDos, onClickRemoveBtn}) => {
+const ToDoList = ({toDos, onClickRemoveBtn, onClickCheckBoxToggle}) => {
     
   return (
     <div className='ToDoList'>
         {
             // App.js로 부터 넘어온 toDos를 map함수로 toDos의 요소 개수 만큼 출력하도록 수정
             toDos.map(toDo => (
-                <ToDoListItem toDo={toDo} key={toDo.id} onClickRemoveBtn={onClickRemoveBtn}/>
+                <ToDoListItem toDo={toDo} key={toDo.id} onClickRemoveBtn={onClickRemoveBtn} onClickCheckBoxToggle={onClickCheckBoxToggle}/>
             ))
         }
     </div>
