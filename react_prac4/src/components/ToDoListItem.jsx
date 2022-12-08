@@ -32,4 +32,4 @@ const ToDoListItem = ({toDo, onClickRemoveBtn, onClickCheckBoxToggle}) => {
   )
 }
 
-export default ToDoListItem
+export default React.memo(ToDoListItem)
