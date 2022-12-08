@@ -103,4 +103,93 @@
     
     => App.js 파일에 ToDoTemplate.jsx 출력해서 화면 확인.
 
-    
+    3) 데이터 삽입(ToDoInsert.jsx)
+    => 데이터 삽입을 위해 하나의 input과 버튼을 가진 컴포넌트
+
+    [ToDoInsert.jsx]
+        import React from 'react'
+
+        // react-icons 라이브러리의 MaterialDesign의 MdAdd 라는 아이콘을 사용한다.
+        // 다른 iocons를 사용할 거라면 https://react-icons.github.io/react-icons 에서 보고 지정
+        import {MdAdd} from 'react-icons/md'
+        import './ToDoInsert.scss'
+
+        const ToDoInsert = () => {
+        return (
+            /* className은 ToDoInsert.scss 파일에서 지정자 역할을 하는 클래스이름과 동일하게 한다. */
+            <form className='ToDoInsert'>
+                <input placeholder='할 일을 입력하세요'/>
+                <button type='submit'><MdAdd/></button>
+            </form>
+        )
+        }
+
+    export default ToDoInsert
+
+    => ToDoInsert.jsx 를 App.js에서 ToDoTemplate안에 출력하도록 수정
+    [App.js]
+        import React from 'react'
+        import ToDoTemplate from './components/ToDoTemplate'
+        import ToDoInsert from './components/ToDoInsert'
+
+        const App = () => {
+        return (
+            <ToDoTemplate>
+            <ToDoInsert/>
+            </ToDoTemplate>
+        )
+        }
+
+        export default App
+
+    => ToDoInsert.scss 파일 생성후 작성
+    [ToDoInsert.scss]
+    .ToDoInsert{
+        display: flex;
+        background: #495057;
+        input{
+            background-color: none;
+            outline: none;
+            border: none;
+            padding: 0.5rem;
+            font-size: 1.125rem;
+            line-height: 1.5;
+            color: black;
+            
+            &::placeholder{
+                color: #dee2e6;
+            }
+
+            flex: 1; /* 상위 태그에 flex가 설정되어 있으면 전체 합에 대한 비율로 배치가 가능하다. - bootstrap이 많이사용(전체 합이 늘 12) */
+        }
+
+        button{
+            background: none;
+            outline: none;
+            border: none;
+            background: #868e96;
+            color: white;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+
+            cursor: pointer;
+
+            transition: 1.0s background ease-in;
+
+            &:hover{
+                background: #abd5bd;
+            }
+        }
+    }
+
+    4) 데이터 목록화면(ToDoListItem.jsx, ToDoList.jsx)
+    => ToDoListItem.jsx 는 하나하나의 항목을 출력한다.
+    => ToDoList.jsx 는 작성된 하나하나의 항목인 ToDoListItem 을 List 방식으로 출력한다.
+    => 하나하나의 항목인 ToDoListItem.jsx의 스타일 적용을 위한 ToDoListItem.scss 파일을 생성하고 작성한다.
+
+    [ToDoListItem.jsx]
+
+    [ToDoList.jsx]
