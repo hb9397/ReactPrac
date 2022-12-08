@@ -1,0 +1,106 @@
+[react_prac4]
+
+1. 기본 설정
+    => sass-loader(Scss파일 사용을 위한 라이브러리), sass(Scss파일 사용을 위한 라이브러리), react-icons, classnames, open-color  라이브러리 설치
+
+    1) index.css (global css) 수정
+    => body 태그의 padding과 backgoround 추가
+
+    [index.css]
+    body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding: 0;
+    background: #e9e9e9;
+    }
+
+    code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+    }
+
+    => Web Application에서 body나 모든 box 태그에 margin과 padding을 0으로 설정하는 경우가 있는데 이유는 구버전의 IE 와의 호환성 문제 때문이다.
+        -> IE 구버전은 width와 height 안에 padding과 margin 그리고 border의 크기가 포함되고 나머지 브라우저는 content의 크기만 포함된다.
+
+    2) App.js 수정
+    [App.js]
+    import React from 'react'
+
+    const App = () => {
+    return (
+        <div>
+        To Do Application
+        </div>
+    )
+    }
+
+    export default App
+
+2. UI
+    1) 구성
+        ToDoTemplate: Main 컴포넌트
+        ToDoInsert: 데이터 삽입을 위해 하나의 input과 버튼을 가진 컴포넌트
+        ToDoListItem: 하나의 항목을 출력하기 위한 컴포넌트
+        ToDoList: ToDoListItem 의 목록을 출력하기 위한 컴포넌트
+
+        => ToDoListItem을 ToDoList에 배치하고 ToDoList와 ToDoInsert를 ToDoTemplate에 배치해서 ToDoTemplate을 App에 배치시킨다.
+
+        => ToDo의 내용은 사용자 구분을 위한 값, 내용, 실행 여부로 구성한다.
+
+        => 모든 컴포넌트와 scss 파일은 /src/components 디렉토리에 배치한다.
+        => 이 부분은 컴포넌트와 scss파일과 index.js로 묶어서 별도의 디렉토리로 구성해도 되며 디렉토리의 이름은 컴포넌트의 이름과 같아야한다.
+            -> 재사용증가.
+
+        => node 기반의 프로젝트에서 index.js의 역할은 디렉토리 안의 모든 것들을 외부에서 사용할 수 있도록 export 하는 것이다.
+        => 이렇게 되면 require나 import 할 때 디렉토리안에 있는 index.js파일에서 export한 내용을 가져온다.
+
+    2) Main화면(ToDoTemplate.jsx)
+
+    [ToDoTemplate.jsx]
+        import React from 'react'
+        import './ToDoTemplate.scss'
+
+        // 상위 컴포넌트에서 넘겨준 props의 속성 중 children을 매개변수로 받는다.
+        const ToDoTemplate = ({children}) => {
+        return (
+            <div className='ToDoTemplate'>
+                <div className='app-title'>일정관리</div>
+                <div className='content'>{children}</div>
+            </div>
+        )
+        }
+
+        export default ToDoTemplate
+
+    => ToDoTemplate.jsx의 Style 파일 ToDoTemplate.scss를 components 디렉토리에 생성한다.
+    [ToDoTemplate.scss]
+        .ToDoTemplate{
+            width: 512px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 6rem;
+            border-radius: 4px;
+            overflow: hidden;
+
+            .app-title{
+                background: #22b8cf;
+                color: white;
+                height: 4rem;
+                font-size: 1.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .content{
+                background-color: white;
+            }
+        }
+    
+    => App.js 파일에 ToDoTemplate.jsx 출력해서 화면 확인.
+
+    

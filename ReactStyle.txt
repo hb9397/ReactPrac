@@ -364,6 +364,8 @@ React Styling
         => include-media 라이브러리
         => 색상
             open-color(색상을 자주 사용하는 색상 이름과 숫자를 이용해서 강도를 설정하는 형태)
+
+                https://yeun.github.id/open-color/
         
         => icon
             react-icons 사용(docs도 있다.)
