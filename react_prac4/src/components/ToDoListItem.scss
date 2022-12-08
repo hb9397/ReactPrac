@@ -1,11 +1,19 @@
+.ToDoListItem-virtualized{
+    
+    // 동일한 컴포넌트가 여러개 배치 될 때 상단에 구분선 설정
+    & + &{
+        border-top: 1px solid #dee2e6;
+    }
+
+    &:nth-child(even){ // list의 홀수행 짝수행 다르게 표현하기 위한 설정
+        background: #f8f9fa;
+    }
+}
+
 .ToDoListItem{
     padding:1rem;
     display: flex;
     align-items: center;
-    
-    &:nth-child(even){ // list의 홀수행 짝수행 다르게 표현하기 위한 설정
-        background: #f7f9fa; 
-    }
 
     .checkbox{
         cursor: pointer;
