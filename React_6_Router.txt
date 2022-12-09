@@ -224,5 +224,295 @@ P.S. 운영자 모드(현재는 자동으로 개발자 모드)
 
     => yarn add qs 명령으로 qs 라이브러리 설치
 
+5. Sub Routing
+    => Router 내부에 다시 Router를 만드는 것
+    => Articles.jsx 파일을 만들어서 서브라우팅할 내용을 작성한다.
 
+    [Articles.jsx]
+    import React from 'react'
+    import {Link} from 'react-router-dom'
+
+    const Articles = () => {
+    return (
+        <div>
+            <ul>
+                <li>
+                    <Link to = "/articles/1">
+                        손으로 코딩하고 뇌로 컴파일하며 눈으로 디버깅한다.
+                    </Link>
+                </li>
+                <li>
+                    <Link to = "/articles/2">
+                        나쁜 프로그램을 만드는 걸 막아주는 프로그래밍 언어는 없다.
+                    </Link>
+                </li>
+                
+            </ul>
+        </div>
+    )
+    }
+
+    export default Articles
+
+    => Articles.jsx에서 연결된 링크로 이동하면 출력할 페이지 Article.jsx를 생성하고 작성한다.
+
+    [Article.jsx]
+    import React from 'react'
+    import { useParams } from 'react-router-dom'
+
+    const Article = () => {
+
+        const {id} = useParams();
+
+    return (
+        <div>
+            <h2>게시글 {id}</h2>
+        </div>
+    )
+    }
+
+    export default Article
+
+    => App.js에 추가해서 서브라우팅 완성
+    [App.js]
+    import React from 'react'
+    import {Routes, Route} from 'react-router-dom'
+    import About from './components/About'
+    import Home from './components/Home'
+    import Profile from './components/Profile'
+    import Article from './components/Article'
+    import Articles from './components/Articles'
+
+    const App = () => {
+    return (
+        <Routes>
+        <Route path='/' element={<Home/>}></Route>
+        <Route path='/about' element={<About/>}></Route>
+        <Route path='/profile/:username' element={<Profile/>}></Route>
+        <Route path='/articles' element={<Articles/>}></Route>
+        <Route path='/articles/:id' element={<Article/>}/>
+        </Routes>
+    )
+    }
+
+    export default App
+
+6. 공통 레이아웃 
+    1) 만드는 방법
+    => "/", "/about", "/profile"에 공통된 레이아웃을 위한 컴포넌트 Layout.jsx 를 만들고 각 페이지 컴포너트에 직접 출력한다.
+    => 중첩된 라우트와 Outlet을 이용해서 구현 -> 한번만 설정하면 된다.
+    => 이후 App.js에 공통된 레이아웃을 위해 수정한다.
+
+    [Layout.jsx]
+    import React from 'react'
+    import { Outlet } from 'react-router-dom'
+    const Layout = () => {
+
+    return (
+        <div>
+            <headed style = {{background: 'lightgrey',
+            padding: 16, fontSize: 24}}>
+                Header
+            </headed>
+            <main>
+                <Outlet/>
+            </main>
+        </div>
+    )
+    }
+
+    export default Layout
+
+    [App.js]
+    import React from 'react'
+    import { Routes, Route } from 'react-router-dom'
+    import About from './components/About'
+    import Home from './components/Home'
+    import Profile from './components/Profile'
+    import Article from './components/Article'
+    import Articles from './components/Articles'
+    import Layout from './components/Layout'
+
+    const App = () => {
+    return (
+        <Routes>
+        <Route element={<Layout />}>
+            <Route path='/' element={<Home />}></Route>
+            <Route path='/about' element={<About />}></Route>
+            <Route path='/profile/:username' element={<Profile />}></Route>
+        </Route>
+
+        <Route path='/articles' element={<Articles/>}>
+            <Route path=':id' element={<Article/>} />
+        </Route>
+        </Routes>
+    )
+    }
+
+    export default App
+
+7. 라우팅에서의 index 속성
+    => index라는 props가 존재하는데 이 props가 "/"입니다.
+    => App.js에 올리는 routing 코드 중 메인 페이지의 path를 index로 구별해주는 것이 좋다.
+
+    [App.js]
+    const App = () => {
+        .....
+        return(
+            ...
+            <Routes>
+            <Route element={<Layout />}>
+                <Route index element={<Home />}></Route>
+                <Route path='/about' element={<About />}></Route>
+                <Route path='/profile/:username' element={<Profile />}></Route>
+            </Route>
+            ....
+            </Routes>
+            ...
+        )
+    }
+    ....
+
+8. Router의 부가 기능
+    1) useNavigate
+    => Link 컴포넌트를 이용하지 않고 다른페이지로 이동하고자 할 때 사용하는 Hook
+    => Redirect 하고자 하는 경우에 사용한다.
+
+    P.S. Web에서의 페이지 이동
+    - Forwarding
+        요청(req)객체를 유지하면서 이동하는데 새로 고침을 하면 요청이 다시 이뤄지는데 이경우에 서버에서 처리하는 로직이 있으면 다시 로직을 수행한다.
+        새로 고침을 했을 때 작업을 다시 수행하고자 하는 경우 사용한다. -> 주로 조회할 때 사용한다.
+
+    - Redirect
+        요청 객체를 소멸시키면서 이동하고 새로고침을 하면 요청이 다시 이뤄지는 것이 아니고 현재 보여지고 있는 결과를 다시 출력한다.
+        작업을 다시 수행하지 않아야 하는 경우에 사용한다. -> 삽/삭/갱 에 주로 이용한다.
+
+    => useNavigate Hook이 반환한 함수를 호출해서 처리할 수 있는데 매개변수로는 정수나 문자열 하나 그리고 옵션을 설정한다.
+    => 첫번째 매개변수가 숫자이면 숫자만큼 뒤나 앞으로 이동한다.
+    => 문자열이면 이동할 URL이 된다.
+    => 두번째 매개변수로 객체를 만들어서 replace 옵션에 true를 설정하면 현재 페이지에 대한 기록을 남기지 않는다.
+
+    2) useNavigate 사용
+    => Layout.jsx 수정
+    [Layout.jsx]
+    import React from 'react'
+    import { Outlet, useNavigate } from 'react-router-dom'
+    const Layout = () => {
+        const navigate = useNavigate(); // Navigate hook 호출
+
+        // 뒤로 이동하는 함수
+        const goBack = () => {
+            navigate(-1);
+        }
+
+        // articles로 이동하는 함수
+        const goArticles = () => {
+            navigate("/articles");
+        }
+
+    return (
+        <div>
+            <header style = {{background: 'lightgrey',
+            padding: 16, fontSize: 24}}>
+                <button onClick={goBack}>뒤로</button>
+                <button onClick={goArticles}>게시글</button>
+            </header>
+            <main>
+                <Outlet/>
+            </main>
+        </div>
+    )
+    }
+
+    export default Layout
+
+    3) NavLink
+        => Link와 거의 유사한데 현재 경로와 Link에서 사용하는 경로가 일치하는 경우 특정 스타일을 적용할 수 있도록 해주는 컴포넌트
+
+    4) Navigate
+        => 화면에 보여지는 순간 다른 페이지로 이동하고자 할 때 사용하는 컴포넌트
+        => Login.jsx 파일을 생성하고 작성
+        [Login.jsx]
+        import React from 'react'
+        const Login = () => {
+            
+
+        return (
+            <div>
+                로그인 페이지
+            </div>
+        )
+        }
+
+        export default Login
+
+        => MyPage.jsx 파일을 생성하고 Navigate처리를 해서 로그인 안되었을 때 Login.jsx 로 넘기고 App.js에 MyPage, Login 라우터 등록
+        [MyPage.jsx]
+        import React from 'react'
+        import { Navigate } from 'react-router-dom'
+
+        const MyPage = () => {
+            // 임시로 만든 로그인 여부
+            const isLoggedIn = false;
+
+            if(!isLoggedIn){
+                return <Navigate to="/login" replace={true}></Navigate>
+            }
+
+        return (
+            <div>
+                MyPage
+            </div>
+        )
+        }
+
+        export default MyPage
+
+        [App.js]
+        import React from 'react'
+        import { Routes, Route } from 'react-router-dom'
+        import About from './components/About'
+        import Home from './components/Home'
+        import Profile from './components/Profile'
+        import Article from './components/Article'
+        import Articles from './components/Articles'
+        import Layout from './components/Layout'
+        import Login from './components/Login'
+        import MyPage from './components/MyPage'
+
+        const App = () => {
+        return (
+            <Routes>
+            <Route path='/login' element={<Login/>}></Route>
+            <Route path='/mypage' element={<MyPage/>}></Route>
+            
+            <Route element={<Layout />}>
+                <Route index element={<Home />}></Route>
+                <Route path='/about' element={<About />}></Route>
+                <Route path='/profile/:username' element={<Profile />}></Route>
+            </Route>
+
+            <Route path='/articles' element={<Articles/>}>
+                <Route path=':id' element={<Article/>} />
+            </Route>
+            </Routes>
+        )
+        }
+
+        export default App
+
+    5) 404 에러(클라이언트의 URL이 잘못된 경우)에 대한 대응
+         => Route를 만들 때 path를 "*"로 설정한 라우터를 App.js의 가장 밑에 배치해서 404에러에 대응할 컴포넌트와 연결 시킨다.
+         [App.js]
+
+         const App = () => {
+            ......
+            return(
+                <Routes>
+                ....
+                ....
+                    <Route path = "*" element={<Home/>}></Route>
+                </Routes>
+            )
+         }
 
