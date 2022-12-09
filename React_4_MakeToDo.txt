@@ -1139,71 +1139,78 @@
     => ToDoList.jsx 과 ToDoListItem.jsx 변경
 
     [ToDoList.jsx]
+    import React, { useCallback } from 'react'
+    import ToDoListItem from './ToDoListItem'
+    import './ToDoList.scss'
+    import { List } from 'react-virtualized'
+
+    const ToDoList = ({ toDos, onClickRemoveBtn, onClickCheckBoxToggle }) => {
+
+        // 하나의 항목을 랜더링하기 위한 함수를 생성한다.
+        const rowRenderer = useCallback(({ index, key, style }) => {
+            // 출력할 데이터를 가져온다
+            const toDo = toDos[index];
+            console.log(toDo.length)
+            return (
+                <ToDoListItem
+                    toDo={toDo}
+                    key={key}
+                    onClickRemoveBtn={onClickRemoveBtn}
+                    onClickCheckBoxToggle={onClickCheckBoxToggle}
+                    style={style} />
+            )
+        }, [onClickRemoveBtn, onClickCheckBoxToggle, toDos])
+
+        return (
+            <List className='ToDoList'
+                width={512} // 항목의 넓이
+                height={513} // 항목이 들어갈 list의 전체의 높이
+                rowCount={toDos.length} // 전체 데이터 개수
+                rowHeight={57} // 항목의 높이
+                rowRenderer={rowRenderer} // 행을 만들어줄 함수 
+                list={toDos}
+                style={{ outline: 'none' }}>
+            </List>
+        )
+    }
+
+    export default ToDoList
 
     [ToDoListItem.jsx]
+    import React, { useCallback } from 'react'
+    import './ToDoListItem.scss'
+    import {
+        MdCheckBoxOutlineBlank,
+        MdCheckBox,
+        MdRemoveCircleOutline
+    } from 'react-icons/md'
+    import cn from 'classnames';
 
+    const ToDoListItem = ({ toDo, onClickRemoveBtn, onClickCheckBoxToggle, style }) => {
 
-** 데이터 불변성(매우 중요_CS에서도 코딩에서도) **
-1. 불변성 
-    => React에서는 props와 useState로 만든 데이처는 원본을 수정할 수 없다.
-    => Recat는 Virtual DOM의 개념을 사용해서 랜더링을 구현한다.
-    => React는 현재 화면의 DOM과 Memory 상의 Virtual DOM을 비교해서 수정된 부분만 다시 랜더링 하는 구조로 랜더링 속도를 향상시킨다.
-    => 게임의 물리 엔진도 이 원리를 이용하고, 항상 비교를 위해서 원본은 수정되면 안된다.
+        // ToDoList 로 부터 넘어온 데이터 중 text와 checked만 분해
+        const { text, checked, id } = toDo;
 
-    => JS는 1개 데이터를 가진 것과 여러개의 데이터르 가진 것이 사용할 때, 다른 원리로 동작한다.(데이터는 참조/비참조가 아니라 1개인지 2개이상인지로 구별한다.)
+        const onDelete = useCallback((e) => {
+            const result = window.confirm(`${text}를 정말로 삭제 하시겠습니까?`);
+            if (result) {
+                onClickRemoveBtn(id);
+            }
+        }, [onClickRemoveBtn, id, text])
 
-        let a = 10; , let b = a; 와 let obj1 = {name: "adam"};, let obj2 = obj1; 은 다른원리로 동작한다.
-        근본적으로 참조를 b나 obj2에 대입하는 것은 같으나 let b = a;는 let b = 10 즉 데이터 10 자체를 가리키게 한것과 같아서 a와 b는 서로 영향을 주지 않는다.
-        obj2는 obj이 참조하고 있는 곳의 시작위치의 Hashcode를 obj2에 대입하는 것과 같으므로 obj1과 obj2는 서로 영향을 미친다.
-        객체 뿐만 아니라 배열도 마찬가지다.
+        return (
+            <div className='ToDoListItem-virtualized' style={style}>
+                <div className='ToDoListItem'>
+                    <div className={cn('checkbox', { checked })} onClick={(e) => { onClickCheckBoxToggle(id) }}>
+                        {checked ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
+                        <div className='text'>{text}</div>
+                    </div>
+                    <div className='remove' onClick={onDelete}>
+                        <MdRemoveCircleOutline />
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
-    => 이 때 React에서는 앞서 봤든 Virtual DOM과 DOM을 비교해서 리랜더링 하는 것을 반영하기 때문에 컴포넌트 내부에서 배열이나 객체를 사용할 때는 항상 객체나 배열의 원본을 수정할 수 없다.
-    => 그러므로 배열에서는 배열객체의 함수를 사용할 때 return을 하는 함수를 사용하는 것인지 확인하거나 없으면 let ar3 = [...ar1]처럼 복제해서 작업한다.
-    => return이 있는 함수는 왠만해서 원본의 데이터를 수정하지 않지만 없는 함수는 원본을 접근할 가능성이 높다.
-        -> for each도 return하지 않지만 for each는 함수에 순회해서 접근하는 것 말고는 작업하지 않는다.
-
-    => 하지만 객체는 return을 해주는 함수가 거의 없으므로 복제해서 사용하는 경우가 많기 때문에 let obj3 = {...obj1}과 같이 복제해서 작업해야 한다.
-    => {...객체}, [...배열] 은 spread 연산이라고 한다.
-    => spread 연산은 얕은 복사에 해당한다.
-
-    => 위와 같이 객체나 배열과 같이 2개 이상의 복제 문제를 해결하기 위해 얕은복사(weak copy)와 깊은복사(deep copy)가 있다.
-    
-    => 얕은 복사(가장 바깥쪽만 복사한다.)의 경우
-        let original = {num : 2000}
-        let weakcopy = Object.assign({}, original);
-        weakcopy.num = 3000;
-        
-        console.log(weakcopy);
-        console.log(original);
-    => 확인하면 서로 값이 다른것을 확인할 수 있다.
-
-    => 이때 얕은 복사의 문제점은 객체안에 존재하는 객체의 속성이나 배열 내부의 데이터는 여전히 같은 참조를 가리키게 복제 된다는 것이다.
-        original = {
-            num : 1000,
-            ar:["a", "b"]
-        }
-        // spread연산도 얕은 복사에 해당한다.
-        let weakcopy = {...original}
-        weakcopy.ar[0] = "이런"
-
-        console.log(weakcopy);
-        console.log(original);
-    => 얕은 복사를 해도 객체 값의 참조를 다르게 할 수 있어도 안에 존재하는 객체의 속성이나 배열 내부의 데이터의 참조는 다르게 할 수 없어서 객체 내부의 객체속성이나 배열요소를 변경하면 동일하게 변경된다.
-
-    => 깊은 복제는 JS 내부 라이브러리에는 존재하지 않는다.
-    => 깊은 복사는 재귀적으로 복제하는 것을 뜻한다.
-    => 편법으로 데이터만 있는 경우에는 JSON 문자열로 변환후 JSON 파싱을 수행하는 방법이 있다.(JSON은 함수가 없기 때문에 함수의 HashCode참조를 다르게 할 방법으로는 사용할 수 없다.)
-        
-        original = {
-            num : 1000,
-            ar:["a", "b"]
-        }
-        let deepcopy = JSON.pars(JSON.stringfy(original));
-        deepcopy.ar[0] = "이런"
-        console.log(deepcopy);
-        console.log(original);
-    => original의 배열 요소와 복제한 deepcopy 객체의 배열요소가 서로 다른 것을 확인한다.
-
-    => 함수도 복제하고 싶은 경우 함수를 직접 구현하거나 외부 라이브러리의 도움을 받는다.
-    => immer나 loadsh 같은 외부 라이브러리가 이를 수행할 수 있다.
-    
+    export default React.memo(ToDoListItem)
