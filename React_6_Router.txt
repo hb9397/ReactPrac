@@ -639,4 +639,210 @@ P.S. 운영자 모드(현재는 자동으로 개발자 모드)
 
     2) Redux사용
     => ReduxExercise.js 에 Redux예제 코드 작성후 브라우저 콘솔에 분기에 따른 값 찍히는 지 확인
+    [ReduxExercise.js]
+    import { createStore } from 'redux'
+    console.log("Redux 사용 준비");
+
+
+
+    // 사용할 상태 정의
+    const initialState = {
+        counter: 0,
+        text: '',
+        list: []
+    }
+
+    // 액션의 타임 생성
+    const INCREASE = "INCREASE";
+    const DECREASE = "DECREASE";
+    const CHANGE_TEXT = "CHANGE_TEXT";
+    const ADD_TO_LIST = "ADD_TO_LIST";
+
+    // 액션 생성 함수 정의
+    const increase = () => {
+        return { type: INCREASE };
+    }
+
+    const decrease = () => {
+        return { type: DECREASE };
+    }
+
+    const changeText = (text) => {
+        return { type: CHANGE_TEXT, text };
+    }
+
+    const addToList = (item) => {
+        return { type: ADD_TO_LIST, item };
+    }
+
+    // reducer - 위에 작성한 initalState와 action을 매개변수로 받아 분기문 작성
+    function reducer(state = initialState, action) {
+        switch (action.type) {
+            case INCREASE:
+                return { ...state, counter: state.counter + 1 }
+
+            case DECREASE:
+                return { ...state, counter: state.counter - 1 }
+
+            case CHANGE_TEXT:
+                return { ...state, text: action.text }
+
+            case ADD_TO_LIST:
+                return { ...state, list: state.list.concat(action.item)}
+
+            default:
+                return state;
+        }
+    }
+
+    // Store를 만드는 함수
+    const store  = createStore(reducer);
+
+    // 현재 store의 상태 확인
+    console.log(store.getState());
+
+    // Listener 설정
+    // store의 상태가 변경될 때 마다 호출되도록 하는 역할
+    const listener = () => {
+        const state = store.getState();
+        console.log(state);
+    }
+
+    // 구독 설정
+    // unSubScribe 할 때 마다 해당 파일에 작성된 내용을 불러온다.
+    const unSubScribe = store.subscribe(listener)   
+
+    // 액션 호출
+    store.dispatch(increase());
+    store.dispatch(decrease());
+    store.dispatch(changeText('데이터'));
+    store.dispatch(addToList({id: 1, text: '리듀서'}));
+
+    [ReduxExam.jsx]
+    import React from 'react'
+    import "./RuduxExercise"
+
+    const ReduxExam = () => {
+    return (
+        <div>ReduxExam</div>
+    )
+    }
+
+    export default ReduxExam
+
+    [App.js]
+    .....
+    import ReduxExam from './components/ReduxExam'
+    .....
+        <Route path = '/redux' element={<ReduxExam/>}></Route>
+    .....
+
+6. Redux Module
+    => 리덕스 모듈은 액션 타입, 액션 생성 함수, 리듀서를 포함하는 JS 파일을 의미한다.
+    => 리덕스 샘플에서 종종 액션과 리듀서를 분리해서 정의하지만,
+    => 실제 개발환경에서는 ReduxExercise.js와 같이 대부분 액션과 리듀서를 하나의 파일에 만드는 경우가 많다.
+    => 하나의 파일에 액션과 리듀서를 만드는 것을 Ducks 패턴이라고 한다.
+    => 이전의 예제를 모듈화 시킨다면 counter의 변화를 주는 부분과 text에 변화를 주는 부분 그리고 배열에 변화를 주는 부분을 별도의 파일에 작성하고 다른 파일(index.js가 될 가능성이 높다)에서 이를 combine 한후 exports 하는 형태로 만드는 것이 일반적이다.
+    => 액션을 구분하기 위해서 액션 이름을 만들 때 액션이름 앞에 접두어를 사용한다.
+        -> 모듈화 할 때는 관련있는 것들 끼리 한 묶음이라는 것을 알 수 있는 이름을 사용해야한다.
+
+7. react 프로젝트에 redux 적용
+    1) yarn add recat-redux로 라이브러리 설치
+    2) 리덕스 관련 파일들을 모듈화 하기 위한 reduxModules 디렉토리 생성
+    3) reduxModules 디렉토리에 숫자를 증감하는 couter.js 리덕스를 생성한다.
+
+    [counter.js]
+    // 타입 생성 - 매개변수를 받아서 증감, INCREASE, DECREASE
+    const SET_DIFF = 'couter/SET_DIFF';// counter 라는 접두어를 붙혀서 한묶음임을 암시
+    const INCREASE = 'couter/INCREASE';
+    const DECREASE = 'couter/DECREASE';
+
+    // 액션 생성 함수
+    export const setDiff = diff => ({ type: SET_DIFF, diff });
+    export const increase = () => ({ type: INCREASE });
+    export const decrease = () => ({ type: DECREASE });
+
+    // 초기 상태 선언
+    const initalState = {
+        number: 0,
+        diff: 1
+    }
+
+    // 리듀서 
+    export default function counter(state = initalState, action) {
+        switch (action.type) {
+            case SET_DIFF:
+                return {...state, diff: action.diff};
+
+            case INCREASE:
+                return{...state, number: state.number + state.diff};
+
+            case DECREASE:
+                return{...state, number: state.number - state.diff};
+
+            default:
+                return;
+        }
+    }
+
+    4) reduxModules 디렉토리에 todos.js 파일을 생성
+    [todos.js]
+    const ADD_TODO = 'todos/ADD_TODO';
+    const TOGGLE_TODO = 'todos/TOGGLE';
+
+    // 액션 생성 함수 
+    let nextId = 1;
+
+    export const addToDo = text => ({
+        type: ADD_TODO,
+        todo: {
+            id: nextId++,
+            text
+        }
+    })
+
+    export const toggleToDo = id => ({
+        type: TOGGLE_TODO,
+        id
+    })
+
+    const initalState = [];
+
+    export default function todos(state = initalState, action) {
+        switch (type.action) {
+            case ADD_TODO:
+                return state.concat(action.todo);
+
+            case ADD_TODO:
+                return state.map(todo => todo.id === action.id ? 
+                    {...todo, done: !todo.done} : todo); 
+            
+            default:
+                return;
+        }
+    }
+
+    5) 많아진 리듀서를 내보내서 사용하면 불편할 수 있기 때문에 두개의 리듀서 counter.js, todos.js를 합쳐서 export 해주는 index.js 파일 생성
+    [/src/reduxModules/index.js]
+    import { combineReducers } from "redux";
+
+    import counter from './counter';
+    import todos from './todos';
+
+    const rootReducer = combineReducers({counter, todos});
+
+    export default rootReducer;
+
+    6) /src/index.js 파일에서 reducer를 가져와서 Store를 생서하는 코드 작성
+    [/src/index.js]
     
+
+    7) 컴포넌트의 분류
+    => Presentation Component
+        리덕스 스토어에 직접 접근하지 않고 필요한 값이나 함수를 넘겨받아서 사용하는 컴포넌트로 UI를 선언하는 것에만 집중
+
+    => Container Component
+        리덕스 스토어에 접근해서 상태를 조회하거나 액션을 디스패치하는 컴포는토 HTML 태그를 사용하지 않고 Component를 가져와서 사용함
+
+        
+

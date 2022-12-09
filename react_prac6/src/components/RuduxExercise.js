@@ -73,5 +73,5 @@ const unSubScribe = store.subscribe(listener)
 // 액션 호출
 store.dispatch(increase());
 store.dispatch(decrease());
-store.dispatch(changeText());
-store.dispatch(addToList());
+store.dispatch(changeText('데이터'));
+store.dispatch(addToList({id: 1, text: '리듀서'}));
