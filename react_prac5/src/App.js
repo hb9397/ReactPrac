@@ -69,7 +69,7 @@ const App = () => {
     e.preventDefault();
 
     const info = {
-      id: nextId,
+      id: nextId.current,
       name: form.name,
       username: form.username
     }
@@ -84,7 +84,7 @@ const App = () => {
       username: ''
     });
 
-    nextId.current = nextId + 1;
+    nextId.current += 1;
   })
 
 
