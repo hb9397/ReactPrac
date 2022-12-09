@@ -1,0 +1,228 @@
+P.S. 운영자 모드(현재는 자동으로 개발자 모드)
+    => yarn build, yarn add --location=global serve, serve -s build 명령 입력 안돼면 cmd 에서 설치를 npm으로 진행후 serve 명령 입력
+    => 운영자 모드로 실시간으로 요청을 모니터링 할 수 있다.
+
+**React Router**
+[react_prac6]
+1. Routing
+    => 요청 URL에 따라서 분기해서 출력하는 것을 라우팅이라고한다.
+
+2. SPA(Single Page Application)
+    1) Server Rendering
+    => 웹 브라우저가 서버에게 요청을 전송하면 서버가 HTML을 전송해서 전체를 다시 출력하는 방식이다.
+    => 사용자와 인터럭션(사용자의 조작이 많은)이 많은 웹 애플리케이션에서는 속도 측면에서 문제가 발생할 수 있다.
+
+    2) SPA
+    => 첫번째 요청을 전송했을 때 만 HTML이 전송되고 그 이후 부터 요청을 하면 서버가 JSON(XML 도 가능) 형태의 데이터를 전송하고 브라우저가 이 데이터를 파싱해서 랜더링하는 구조
+    
+    => 단점
+        -> 앱의 규모가 커지면 JS파일의 사이즈가 너무 커지게 되어서 트래픽과 로딩 속도에 문제가 발생할 수 있는데 이 문제를 해결하기 위해서는 code Splitting을 이용해서 해결한다.
+        -> 브라우저에서 JS를 관리하는 경우 크롤러가 페이지의 정보를 제대로 받아가지 못하는 현상이 발생해서 검색엔진에서 페이지의 정보를 검색 결과에 포함하지 못하는 경우가 발생할 수 있다.
+        -> 처음 JS가 실행될 때 까지 페이지가 비어있기 때문에 빈페이지가 보여질 수 있는데 이런 경우를 방지하기 위해서는 첫번째 페이지는 서버에서 랜더링을 해서 보여주고 다음 페이지 부터 클라이언트 랜더링을 하는 것이 좋다.
+        -> SPA는 적절한 라우팅을 이용해서 여러 페이지를 하나의 페이지에 출력한다.
+        -> 라우팅에서 많이 사용되는 라이브러리로 react-router-dom을 사용하는데 5버전과 6버전이 조금 상이하다.
+
+3. 기본적인 사용
+    => yarn add react-router-dom 으로 라이브러리 설치
+
+    1) index.js 수정
+    [index.js]
+    import React from 'react';
+    import ReactDOM from 'react-dom/client';
+    import './index.css';
+    import App from './App';
+    import reportWebVitals from './reportWebVitals';
+    import {BrowserRouter} from 'react-router-dom'
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(
+    <BrowserRouter>
+        <App />
+    </BrowserRouter>
+    );
+
+    // If you want to start measuring performance in your app, pass a function
+    // to log results (for example: reportWebVitals(console.log))
+    // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+    reportWebVitals();
+    
+    2) src/components 에 메인으로 보여줄 페이지 Home.jsx 추가
+    
+    3) src/components 에 About.jsx 추가
+
+    4) URL에 컴포넌트 매핑 App.js 수정
+    => 사용방법
+        <Route path=URL element={출력하고자 하는 컴포넌트}/>
+
+    [App.js]
+    import React from 'react'
+    import {Routes, Route} from 'react-router-dom'
+    import About from './components/About'
+    import Home from './components/Home'
+
+    const App = () => {
+    return (
+        <Routes>
+        <Route path='/' element={<Home/>}></Route>
+        <Route path='/about' element={<About/>}></Route>
+        </Routes>
+    )
+    }
+
+    export default App
+
+4. 링크
+    => Link 라는 컴포넌트를 사용한다.
+    => Link 컴포넌트를 이용하면 페이지를 새로 불러오지 않고 그대로 유지한 상태에서 HTML5 History API를 사용해서 페이지의 URL만 갱신한다.
+    => 실제로는 a태그로 만들어져 있는데 페이지 전환을 방지하는 기능이 추가된 컴포넌트이다.
+
+    => 사용방법
+        <Link to=URL>내용</Link>
+
+    => Home.jsx에서 About.jsx로 이동하는 Link 만들기
+    [Home.jsx]
+    import React from 'react'
+    import {Link} from 'react-router-dom'
+
+    const Home = () => {
+    return (
+        <div>
+            <h1>메인 페이지</h1>
+            <Link to = "/about"><button>소개</button></Link>
+        </div>
+    )
+    }
+
+    export default Home
+
+5. URL Parmeter & Query String
+    1) URL Parameter
+    => URL의 마지막이나 중간에 데이터를 전송하는 것
+    
+    Ex> /profiles/adam 에서 adam 부분을 데이터처럼 변경하면서 사용할 수 있는데 이를 URL Parameter라고 한다.
+    => 이경우 라우팅 할 때 URL /profiles/:이름 의 형태로 작성해야 한다.
+    
+
+    2) Query String
+    => URL 뒤에 ?를 추가하고 이름과 값을 전달 할 때 사용한다.
+    Ex> /profiles?name=adam&email=itstudy@kakao.com
+
+    3) URL 파라미터를 읽어서 그에 맞는 곳으로 라우팅.. Profile.jsx생성, App.js 수정
+    [Profile.jsx]
+    import React from 'react'
+    import { useParams } from 'react-router-dom'
+
+    const Profile = () => {
+        // 출력할 데이터 생성
+        const data = {
+            adam: {
+                name: '군계',
+                description: "동일한 작업을 매일하는 것이 가장 어렵다"
+            },
+            jessica: {
+                name: "제시카",
+                description: "내가 하기 싫은 일은 남도 하기 싫다."
+            }
+        }
+        //URL 파라미터 읽기
+        const params = useParams();
+
+        // username이라는 파라미터를 찾아온다.
+        const profile = data[params.username]
+        return (
+            <div>
+                <h1>사용자 프로필</h1>
+                {profile ? (<div><h2>{profile.name}</h2><p>{profile.description}</p></div>) :
+                    (<p>존재하지 않느 사람입니다.</p>)}
+            </div>
+        )
+    }
+
+    export default Profile
+
+    [App.js]
+    import React from 'react'
+    import {Routes, Route} from 'react-router-dom'
+    import About from './components/About'
+    import Home from './components/Home'
+    import Profile from './components/Profile'
+
+    const App = () => {
+    return (
+        <Routes>
+        <Route path='/' element={<Home/>}></Route>
+        <Route path='/about' element={<About/>}></Route>
+        <Route path='/profile/:username' element={<Profile/>}></Route>
+        </Routes>
+    )
+    }
+
+    export default App
+
+    [Home.jsx]
+    import React from 'react'
+    import {Link} from 'react-router-dom'
+
+    const Home = () => {
+    return (
+        <div>
+            <h1>메인 페이지</h1>
+            <ul>
+            <li>
+            <Link to = "/about"><button>소개</button></Link>
+            </li>
+            <li>
+            <Link to = "/profile/adam"><button>이름으로 이동</button></Link>
+            <Link to = "/profile/jessica"><button>이름으로 이동</button></Link>
+            <Link to = "/profile/void"><button>이름으로 이동</button></Link>
+            </li>
+            </ul>
+            
+            
+        </div>
+    )
+    }
+
+    export default Home
+
+    4) Query String 읽기
+    => 근본적으로 Query String은 Client가 Server에 전달하는 데이터로 react 측면에서는 Query String을 읽는 것보다 만드는 것이 중요하다.
+    => Query String을 만드는 것은 JS 문법을 이용한다.
+    => Query Stirng은 반드시 인코딩 해서 만들어야 한다.
+
+    => useLoacation 이라는 Hook을 이용해서 location이라는 객체를 반환받아서 사용한다.
+    => location 객체의 정보
+        pathname: query string을 제외한 경로
+        search : ?를 포함한 query String
+        hash: #문자열 형태의 값, segment라고 부르기도 하는데 페이지 내에서 이동하기 위해서 사용한다, 예전의 구형 브라우저에서 클라이언트 라우팅을 할때 사용했다, jquery(Cross Browsing 라이브러리) mobiile이 hash를 사용 -> 현재는 jquery를 잘 사용하지 않는다.(IE가 Edge로 넘어가면서 대부분의 JS를 받아들임)
+              jquery를 사용하지 않는 이유는 숨어있는 ajax로 인한 화면깨짐과 느린속도를 해결하기 위한 많은 script 코드 작성 필요의 문제가
+    
+    => state : 페이지 이동시 임의로 넣을 수 있는 상태값
+
+    => react-router-dom에서도 useSearchParams 라는 Hook으로 바로 읽을 수 있다.
+    => qs 라이브러리를 이용하면 string 객체로 변환할 수 있다.
+
+    => About.jsx에서 Query Stirng을 읽어내는 코드 추가
+    [About.jsx]
+    import React from 'react'
+    import { useLocation } from 'react-router-dom'
+    const About = () => {
+
+        // 쿼리 스트링을 읽을 수 있는 훅 생성
+        const location = useLocation();
+
+        return (
+            <div>
+                <h1>React Router 실습</h1>
+                <p>Query String: {location.search}</p>
+            </div>
+        )
+    }
+
+    export default About
+    
+    => 브라우저에 localhost:3000/about?name=adam&number=20 입력해서 확인
+
+    => yarn add qs 명령으로 qs 라이브러리 설치
+
+
+

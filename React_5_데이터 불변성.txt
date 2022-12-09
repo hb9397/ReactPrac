@@ -167,7 +167,7 @@
             {/* 항상 배열을 화면에 뿌릴 때는 map함수 사용 */}
             <ul>
             {data.array.map(info => (
-                <li key={info.id} onClick={onClickRemove(info.id)}>
+                <li key={info.id} onClick={() => onClickRemove(info.id)}>
                 {info.username} ({info.name})
                 </li>
             ))}
@@ -313,15 +313,3 @@
 
     export default App
 
-5. 운영자 모드(현재는 자동으로 개발자 모드)
-    => yarn build, yarn add --location=global serve, serve -s build 명령 입력 안돼면 cmd 에서 설치를 npm으로 진행후 serve 명령 입력
-    => 운영자 모드로 실시간으로 요청을 모니터링 할 수 있다.
-
-**React Router**
-1. Routing
-    => 요청 URL에 따라서 분기해서 출력하는 것을 라우팅이라고한다.
-
-2. SPA(Single Page Application)
-    1) Server Rendering
-    => 웹 브라우저가 서버에게 요청을 전송하면 서버가 HTML을 전송해서 전체를 다시 출력하는 방식
-    

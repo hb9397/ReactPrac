@@ -84,7 +84,7 @@ const App = () => {
       username: ''
     });
 
-    nextId.current += 1;
+    nextId.current = nextId + 1;
   })
 
 
@@ -117,9 +117,11 @@ const App = () => {
         {/* 항상 배열을 화면에 뿌릴 때는 map함수 사용 */}
         <ul>
           {data.array.map(info => (
-            <li key={info.id} onClick={(E) => onClickRemove(info.id)}>
+            <li key={info.id}>
               {info.username} ({info.name})
+              <button onClick={() => onClickRemove(info.id)}>삭제</button>
             </li>
+            
           ))}
         </ul>
       </div>
