@@ -516,3 +516,127 @@ P.S. 운영자 모드(현재는 자동으로 개발자 모드)
             )
          }
 
+** Context **
+1. react 프로젝트에서의 데이터 공유
+    => Component의 props를 주로 이용해서 하위 Component에게 넘겨주는 구조를 이용한다.
+    => 구조가 간단할 때는 크게 어려움이 없지만 구조가 복잡해지면 번거로운 작업이 많아지게 된다.
+    => 여러 곳에서 하나의 데이터를 사용하는 경우도 유사한 작업이 반복될 가능성이 높다.
+
+    => Context API를 이용하면 공유 데이터 작성이 쉬워진다.
+
+2. 사용
+    1) src 디렉토리에 contexts 디렉토리를 생성한다.
+    2) 데이터를 공유하기 위한 context 파일 color.js를 contexts 디렉토리에 생성하고 작성한다.
+    3. App.js에 ColorBox.jsx 페이지(/colorbox) 라우터 등록
+    [color.js]
+    import { createContext } from "react";
+
+    // 공유할 데이터 생성
+    const ColorContext = createContext({color:'black'});
+
+    export default ColorContext
+    
+    3) 작성한 color.js 의 공유데이터를 사용할 컴포넌트 ColorBox.jsx 컴포넌트 생성하고 작성한다.
+    [ColorBox.jsx]
+    import ColorContext from "../contexts/color";
+
+    const ColorBox = () => {
+        return (
+
+            // color.js에서 가져온 공유 데이터 ColorContext를 사용하라면 부모 태그를 <가져온 공유데이터.Consumer>로 감싸면 그 내부에서는
+            // 가져온 공유 데이터를 사용할 수 있다.
+            <ColorContext.Consumer>
+                {value => (<div style={{
+                    width: '64px',
+                    height: '64px',
+                    background: value.color
+                }} />)
+                }
+            </ColorContext.Consumer>
+        )
+    }
+
+    export default ColorBox
+
+** Redux **
+1. redux 
+    => 상태관리 라이브리로 react에서만 사용하는 것은 아니고 node관련 프로젝트에서는 어디서든 사용할 수 있다.
+    => Context API 나 useReducer가 나오기 이전부터 존재했다.
+    => redux를 이용하면 상태관련 로직을 별도의 파일로 분리해서 관리할 수 있다.
+    => 이는 데이터 컴포넌트 간 데이터 공유를 더 쉽게 할 수 있게 도와준다.
+    => 프로젝트의 규모가 크거나 비동기 작업을 주로 하는 경우에 많이 사용한다.
+
+2. 키워드
+    1) Action
+    => 상태에 어떠한 변화가 필요하게 될 action을 발생시키는 객체이다.
+    => 이 객체는 type이 필수적이고 나머지는 option이다.
+    => type을 가지고 동작을 구분해 작업한다.
+    Ex> {
+            type: "INSERT", // 본인이 정하는 것
+            ...
+            type: "INSERT",
+            data: {id: 1, name: "adam"}
+            ...
+            type: "INSERT"
+            text: "adammaada"
+        }
+
+    2) Action creater
+    => Action을 생성하는 함수로 필수는 아니다.
+    => 직접 Action 객체를 생성해도 되지만 별도의 함수를 만들어서 사용하기도 한다.
+    Ex> exprot function addToDo(data){
+            return {
+                type: "ADD_TODO",
+                data
+            }
+        }   
+
+    3) Reducer
+    예시
+    => 상태변화를 일으키는 함수
+    Ex> funciton 이름(state, action){
+            return 변경된 state
+        }
+
+        funciton counter(state, action){
+            switch(action.type){
+                case "INSERT":
+                    return state + 1;
+                
+                case "DECREASE":
+                 return state -1;
+                
+                default:
+                return state;
+            }
+        }
+
+    4) Store 
+    => Redux를 사용하는 애플리케이션에는 하나의 stroe가 생성되는데 이 스토어에는 애플리케이션의 state와 reducer가 들어있고 몇개의 내장 함수를 제공한다.
+
+    => dispatch
+        실제 액션을 발생시키는 함수로 이 함수에 action 객체를 대입하면 dispatch가 redure를 호출해서 함수에서 실행해서 상태를 변화 시킨다.
+
+    => subcribe
+        이 함수는 함수 형태의 파라미터를 받아서 action이 dispatch될 데 호출되어서 파라미터로 받은 함수를 실행한다.
+
+3. 규칙
+
+    1) 하나의 애플리케이션에 하나의 스토어를 가는 것이 원칙이다.
+    2) state는 읽기전용 이다.
+    3) reducer는 pure Function 이엉야 한다
+        - pure Function(순수함수)는 외부에서 넘겨받은 매개변수는 수정하지 않고 복제를 해서 수정한 후 반환해야 한다.
+        - 동일한 입력이면 동일한 출력이 만들어져야 한다.
+        - 랜덤이나 new Date 또는 네트워크에서 다운로드 받는 작업등은 일정한 출력을 만들어내지 못하므로 reducer 에서 처리하면 안되고 별도의 미들웨어를 만들어서 처리한다.
+
+    4) 외부 라이브러리 이므로 yarn add redux로 설치해야 한다.
+
+4. 사용
+    1) JS 파일은 import만 하면 바로 사용할 수 있다.
+    => App.js에 미리 Redux예제 ReduxExam.jsx 파일을 라우터에 등록하고 components 폴더에 ReduxExam.jsx 파일 생성
+    => ReduxExercise.js 파일에 콘솔만 출력하게 생성
+    => App.js에 ReduxExam.jsx가 등록되어 있고 ReduxExercise.js를 ReduxExam.jsx 에서 import하고 있기 때문에 콘솔창에 바로 입력값을 확인 할 수 있다.
+
+    2) Redux사용
+    => ReduxExercise.js 에 Redux예제 코드 작성후 브라우저 콘솔에 분기에 따른 값 찍히는 지 확인
+    

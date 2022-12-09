@@ -21,6 +21,9 @@ const Home = () => {
         <li>
           <Link to="/articles"><button>게시글 이동</button></Link>
         </li>
+        <li>
+          <Link to="/redux"><button>redux 예제로 이동</button></Link>
+        </li>
 
       </ul>
 
