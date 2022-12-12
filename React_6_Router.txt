@@ -844,5 +844,357 @@ P.S. 운영자 모드(현재는 자동으로 개발자 모드)
     => Container Component
         리덕스 스토어에 접근해서 상태를 조회하거나 액션을 디스패치하는 컴포는토 HTML 태그를 사용하지 않고 Component를 가져와서 사용함
 
-        
+[react_prac7]
+8. redux 실습
+    => redux가 없어도 react 프로젝트를 만드는데 지장은 없다, 하지만 왜 알아야 하냐 react 에서만 사용하는 것이 아니기 때문에 이름과 목적/역할 정도는 알고 가능 것이 좋다.
+    => redux는 컴포넌트 밖에다가 만든다.
 
+    1) 프로젝트 생성 및 필요한 라이브러리 설치
+    => yarn create react-app react_prac7
+    =>  yarn add redux react-redux
+
+    2) UI 작업 
+    => Counter와 ToDo 배치
+    => Components 디렉토리 생성후 그 안에 카운터를 위한 conuter.jsx를 만든다.
+
+    [counter.jsx]
+    import React from 'react'
+
+    const Counter = ({ number, onIncrease, onDecrease }) => {
+        return (
+            <div>
+                <h1>
+                    {number}
+                </h1>
+                <button onClick={onIncrease}>
+                    +1
+                </button>
+                <button onClick={onDecrease}>
+                    -1
+                </button>
+            </div>
+        )
+    }
+
+    export default Counter
+
+    => ToDos를 위한 컴포넌트 ToDos.jsx 생성
+    components 디렉토리에 ToDos.jsx 파일을 생성하고 작성
+    🗂redux -> 📁 src -> 📁 components -> (CREATE) 📄 ToDos.jsx
+    import React from "react";
+    //하나의 항목을 출력하기 위한 컴포넌트
+    const ToDoItem = ({todo, onToggle, onRemove}) => {
+        return (<div>
+            <input type = "checkbox"/>
+            <span>텍스트</span>
+            <button>삭제</button>
+        </div>);
+    }
+
+    //여러 개의 ToDoItem을 출력할 컴포넌트
+    const ToDos = ({input, todos, onChangeInput, onInsert, onToggle, onRemove,}) => {
+        const onSubmit = (e) => {
+            e.preventDefault();
+        };
+        return (
+            <div>
+                <form onSubmit={onSubmit}>
+                    <input/>
+                    <button type="submit">등록</button>
+                </form>
+                <div>
+                    <ToDoItem />
+                    <ToDoItem />
+                    <ToDoItem />
+                    <ToDoItem />
+                    <ToDoItem />
+                </div>
+            </div>
+        );
+    }
+    export default ToDos;
+
+    > App.js 파일 수정
+    🗂redux -> 📁 src -> 📄 App.js
+    import React from "react";
+    import Counter from "./components/Counter";
+    import ToDos from "./components/ToDos";
+
+    function App() {
+    return (
+        <div>
+        <Counter number={0}/>
+        <hr/>
+        <ToDos/>
+        </div>
+    );
+    }
+    export default App;​
+
+    3) redux 관련 모듈 생성
+    > modules 디렉토리 생성
+    🗂redux -> 📁 src -> (CREATE) 📁 modules
+    > counter.js 파일을 생성
+    🗂redux -> 📁 src -> 📁 modules -> (CREATE) 📄 counter.js
+    //액션 타입 정의
+    const INCREASE = 'counter/INCREASE';
+    const DECREASE = 'counter/DECREASE';
+
+    //액션 생성 함수 정의
+    export const increase = () => ({type:INCREASE});
+    export const decrease = () => ({type:DECREASE});
+
+    //초기 상태를 정의
+    const initialState = {
+        number:0
+    }
+
+    //리듀서 함수 정의
+    const counter = (state=initialState, action) => {
+        switch( action.type){
+            case INCREASE:
+                return {number:state.number + 1};
+            case DECREASE:
+                return {number:state.number - 1};
+            default:
+                return state;
+        }
+    };
+    export default counter;​
+    
+
+    > todos.js 파일을 생성
+    🗂redux -> 📁 src -> 📁 modules -> (CREATE) 📄 todos.js
+    //액션 타입 정의
+    const CHANGE_INPUT = 'todos/CHANGE_INPUT';
+    const INSERT = 'todos/INSERT';
+    const TOGGLE = 'todos/TOGGLE';
+    const REMOVE = 'todos/REMOVE';
+
+    //액션 생성 함수 정의
+    export const changeInput = input => ({
+        type:CHANGE_INPUT,
+        input
+    });
+
+    let id = 3; //샘플 데이터를 2개 삽입할 것이기 때문에 3을 지정
+    export const insert = text => ({
+        type:INSERT,
+        todo:{
+            id:id++,
+            text,
+            done:false
+        }
+    });
+    export const toggle = id => ({
+        type:TOGGLE,
+        id
+    });
+    export const remove = id => ({
+        type:REMOVE,
+        id
+    });
+
+    //초기 상태 정의
+    const initialState = {
+        input: '',
+        todos: [{
+            id: 1,
+            text: 'Node',
+            done: true,
+        }, {
+            id: 2,
+            text: 'React',
+            done: false,
+        }]
+    };
+
+    // 리듀스 함수 정의
+    const todos = (state=initialState, action) => {
+        switch( action.type){
+            case CHANGE_INPUT:
+                return {...state, input:action.input};
+            case INSERT:
+                return {...state, todos:state.todos.concat(action.todo)};
+            case TOGGLE:
+                return {...state, todos:state.todos.map(
+                    todo => todo.id === action.id ? {...todo,done:!todo.done}:todo)};
+            case REMOVE:
+                return {...state, todos:state.todos.filter(todo => todo.id !== action.id)};
+            default:
+                return state;
+        }
+    }
+    export default todos;
+
+    4) redux 관련 모듈 작성
+    > modules 디렉토리 안에 index.js 파일을 생성하고 작성
+    🗂redux -> 📁 src -> 📁 modules -> (CREATE) 📄 index.js
+    import { combineReducers } from 'redux';
+    import counter from './counter';
+    import todos from './todos';
+
+    const rootReducer = combineReducers({
+        counter,
+        todos,
+    });
+
+    export default rootReducer;
+
+    5) redux 적용을 위해 /src/index.js를 수정
+    [src/index.js]
+    import React from 'react';
+    import ReactDOM from 'react-dom/client';
+    import './index.css';
+    import App from './App';
+    import reportWebVitals from './reportWebVitals';
+
+    import {legacy_createStore as createStore} from 'redux';
+    import { Provider } from 'react';
+    import rootReducer  from './modules'
+
+    const store = createStore(rootReducer);
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(
+    <Provider store = {store}>
+        <App />
+    </Provider>
+    );
+
+    // If you want to start measuring performance in your app, pass a function
+    // to log results (for example: reportWebVitals(console.log))
+    // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+    reportWebVitals();
+
+    6) 컨테이너 컴포넌트 작업
+    => 컨테이너 컴포넌트는 redux를 사용하는 컴포넌트를 의미한다.
+    => src 디렉토리에 containers 디렉토리 생성한다.
+    
+    => 컨테이너 컴포넌트 생성하는 방식
+        -> react-redux의 connect 함수를 사용한다.
+        Ex> connect(mapStateToProps, mapDispatchToProps)(연동할 컴포넌트)
+        - mapStateToProps는 redux Store 안의 상태를 컴포넌트의 props로 넘겨주기 위해서 생성하는 함수이다.
+        - mapDispatchToProps는 action 함수를 컴포넌트의 props로 넘겨주기 위해서 사용하는 함수이다.
+    
+    => containers 디렉토리에 CouterContainer.jsx 생성
+
+    import React from 'react'
+    import{connect} from 'react-redux';
+    import Counter from '../components/Counter';
+    import { increase, decrease } from '../modules/counter';
+
+    const CounterContainer = ({number, increase, decrease}) => {
+    return (
+        <Counter number = {number} onIncrease = {increase} onDerease={decrease}/>
+    )
+    }
+
+    const mapStateProps = state => ({
+        number: state.counter.number
+    });
+
+    const mapToDispatchToProps = dispatch => ({
+        increase:() => {dispatch(increase())},
+        decrease:() => {dispatch(decrease())}
+    })
+
+
+    export default connect(mapStateProps, mapToDispatchToProps) (CounterContainer);
+
+    [App.js] 수정
+    import React from "react";
+    import CounterContainer from "./containers/CounterContainer";
+    import ToDos from "./components/ToDos";
+
+    function App() {
+    return (
+        <div>
+        <CounterContainer number={0}/>
+        <hr/>
+        <ToDos/>
+        </div>
+    );
+    }
+    export default App;
+
+    => containers 디렉토리에 ToDos를 위한 ToDosContainer.jsx 파일 생성하고 작성
+    import React from 'react'
+    import { connect } from 'react-redux';
+    import { changeInput, insert, toggle, remove } from '../modules/todos';
+    import ToDos from '../components/ToDos'
+
+
+    const ToDosContainer = ({input, todos, changeInput, insert, toggle, remove}) => {
+    return (
+            <ToDos input={input} todos={todos} onChangeInput={changeInput} onInsert={insert} onToggle={toggle} onRemove={remove}/>
+        )
+    }
+
+    export default connect(
+        ({todos}) => ({
+            input: todos.input,
+            todos: todos.todos
+        }), {changeInput, insert, toggle, remove}
+    ) (ToDosContainer);
+
+    [App.js] 수정
+    import React from "react";
+    import CounterContainer from "./containers/CounterContainer";
+    import ToDosContainer from "./containers/ToDosContainer";
+
+    function App() {
+    return (
+        <div>
+        <CounterContainer/>
+        <hr/>
+        <ToDosContainer/>
+        </div>
+    );
+    }
+    export default App;
+
+    => components 디렉토리의 ToDos.jsx 수정(메서드 설정)
+    [ToDos.jsx]
+    import React from "react";
+    //하나의 항목을 출력하기 위한 컴포넌트
+    const ToDoItem = ({todo, onToggle, onRemove}) => {
+        return (<div>
+            <input type = "checkbox" onClick={() => onToggle(todo.id)} checked={todo.done} readOnly={true}/>
+            <span style={{textDecoration: todo.done ? 'line-through' : 'none'}}>{todo.text}</span>
+            <button onClick={() => onRemove(todo.id)}>삭제</button>
+        </div>);
+    }
+
+    //여러 개의 ToDoItem을 출력할 컴포넌트
+    const ToDos = ({input, todos, onChangeInput, onInsert, onToggle, onRemove,}) => {
+        const onSubmit = (e) => {
+            e.preventDefault();
+            onInsert(input);
+            onChangeInput('');
+        };
+
+        const onChange = (e) => onChangeInput(e.target.value)
+        return (
+            <div>
+                <form onSubmit={onSubmit}>
+                    <input value={input} onChange={onChange}/>
+                    <button type="submit">등록</button>
+                </form>
+                <div>
+                    {todos.map(todo => (
+                        <ToDoItem todo = {todo}
+                        key = {todo.id}
+                        onToggle = {onToggle} 
+                        onRemove={onRemove}/>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+    export default ToDos;
+
+9. MiddleWare
+    => 액션이 디스패치 된 후 리듀서에 해당 액션을 받아서 작업을 수행하기 전이나 후에 추가적인 작업을 할 수 있도록 해주는 것이다.
+    => 작업을 수행하기 전에는 유효성 검사 같은 작업을 많이 하고 작업이 수행되고 난 후에는 로그기록을 많이 한다.
+    => 유사한 용도록 사용되는 것들을 부르는 몇칭으로는 Filter, Interceptor, AOP 등이 있다.
