@@ -1195,6 +1195,118 @@ P.S. 운영자 모드(현재는 자동으로 개발자 모드)
     export default ToDos;
 
 9. MiddleWare
+    1) 개요
     => 액션이 디스패치 된 후 리듀서에 해당 액션을 받아서 작업을 수행하기 전이나 후에 추가적인 작업을 할 수 있도록 해주는 것이다.
     => 작업을 수행하기 전에는 유효성 검사 같은 작업을 많이 하고 작업이 수행되고 난 후에는 로그기록을 많이 한다.
     => 유사한 용도록 사용되는 것들을 부르는 몇칭으로는 Filter, Interceptor, AOP 등이 있다.
+
+    2) 직접 생성한 미들웨어 적용
+    => src/middelwares 디렉토리를 생성한다.
+    => middlewares 디렉토리에 mymiddleware.js 파일을 만들고 작성한다.
+
+    [mymiddleware.js]
+    const mymiddleware = store => next => action => {
+        // 동작을 로깅
+        console.log(action);
+
+        // 다음 미들웨어나 리듀서에게 전달
+        const result = next(action);
+
+        // 작업이 끝나고 난 후 확인 
+        console.log(result);
+
+        return result;
+    };
+
+    export default mymiddleware
+
+    => src/index.js 수정
+    [src/index.js]
+    import React from 'react';
+    import ReactDOM from 'react-dom/client';
+    import './index.css';
+    import App from './App';
+    import reportWebVitals from './reportWebVitals';
+
+    import {legacy_createStore as createStore, applyMiddleware} from 'redux';
+    import mymiddleware from './middlewares/mymiddleware';
+
+    import rootReducer  from './modules'
+    import { Provider } from 'react-redux';
+
+    const store = createStore(rootReducer, applyMiddleware(mymiddleware));
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(
+    <Provider store = {store}>
+        <App />
+    </Provider>
+    );
+
+    // If you want to start measuring performance in your app, pass a function
+    // to log results (for example: reportWebVitals(console.log))
+    // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+    reportWebVitals();
+
+    3) 외부 라이브러리를 이용한 로그 기록
+    => yarn add redux-logger 로 라이브러리 설치
+
+    => /src/index.js 수정
+
+    [src/index.js]
+    import React from 'react';
+    import ReactDOM from 'react-dom/client';
+    import './index.css';
+    import App from './App';
+    import reportWebVitals from './reportWebVitals';
+
+    import {legacy_createStore as createStore, applyMiddleware} from 'redux';
+    import mymiddleware from './middlewares/mymiddleware';
+    import logger from 'redux-logger';
+
+    import rootReducer  from './modules'
+    import { Provider } from 'react-redux';
+
+    const store = createStore(rootReducer, applyMiddleware(mymiddleware, logger));
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(
+    <Provider store = {store}>
+        <App />
+    </Provider>
+    );
+
+    // If you want to start measuring performance in your app, pass a function
+    // to log results (for example: reportWebVitals(console.log))
+    // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+    reportWebVitals();
+
+** 가상의 API Server 만들기 **
+yarn add json-server 로 라이브러리 설치
+
+=> 프로젝트 루트 디렉토리에 가상의 데이터를 data.json작성
+{
+    "posts": [
+        {
+            "id": 1,
+            "content": "리액트",
+            "done" : true
+        },
+
+        {
+            "id": 2,
+            "content": "노드",
+            "done" : false
+        }
+    ]
+}
+
+=> npx json-server ./data.json --port 4000 으로 서버 실행
+
+=> react 프로젝트에서 외부 서버의 데이터를 proxy를 통해서 가져올 때는 package.json에 proxy 속성을 추가해서 사용한다.
+    "proxy" : "http://localhost:4000"
+
+=> 요청을 수정한다.
+=> 서버의 데이터 요청 URL을 수정한다.
+    http://localhost:4000/posts => /posts
+    http://localhost:4000/posts/1 => posts/1

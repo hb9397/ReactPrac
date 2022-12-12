@@ -4,12 +4,14 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-import {legacy_createStore as createStore} from 'redux';
+import {legacy_createStore as createStore, applyMiddleware} from 'redux';
+import mymiddleware from './middlewares/mymiddleware';
+import logger from 'redux-logger';
 
 import rootReducer  from './modules'
 import { Provider } from 'react-redux';
 
-const store = createStore(rootReducer);
+const store = createStore(rootReducer, applyMiddleware(mymiddleware, logger));
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
